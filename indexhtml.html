@@ -88,7 +88,7 @@
         }
         
         .selected {
-            background-color: #06B6D4 !important; /* Usando o ciano de destaque */
+            background-color: #996E5C !important; /* Corrigido para a cor accent */
             color: white;
             font-weight: bold;
         }
@@ -242,7 +242,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Por Hora</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 70<span class="text-lg text-gray-500">/hora</span></div>
                         <p class="text-gray-600 mb-6">Ideal para consultas rápidas e procedimentos simples</p>
-                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -261,7 +261,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Por Turno</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 150<span class="text-lg text-gray-500">/turno</span></div>
                         <p class="text-gray-600 mb-6">Manhã: 08h às 12h | Tarde: 13h às 17h</p>
-                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -280,7 +280,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Dia Completo</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 300<span class="text-lg text-gray-500">/dia</span></div>
                         <p class="text-gray-600 mb-6">8h às 18h - Para dias intensivos de atendimento</p>
-                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -433,7 +433,7 @@
                                     <span id="totalPrice" class="text-2xl font-bold text-accent">R$ 0,00</span>
                                 </div>
                                 
-                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors font-semibold button-effect">
+                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors font-semibold button-effect">
                                     Pagar com PIX
                                 </button>
                             </div>
@@ -444,6 +444,41 @@
         </div>
     </section>
 
+    <section id="contact" class="py-16 bg-secondary">
+        <div class="container mx-auto px-6">
+            <h3 class="text-4xl font-bold text-center text-textdark mb-12">Informações da Galeria</h3>
+            
+            <div class="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
+                <div class="space-y-6 text-textdark">
+                    
+                    <div class="flex items-start">
+                        <svg class="w-6 h-6 mr-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a6 6 0 00-6 6c0 1.5.78 3.02 1.83 4.29l3.58 3.58a1 1 0 001.41 0l3.58-3.58C15.22 11.02 16 9.5 16 8a6 6 0 00-6-6zm0 8a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                        <div>
+                            <p class="font-semibold text-lg mb-1">Endereço</p>
+                            <p class="text-gray-600">Galeria Coworking Odontológico<br>Praça rui barbosa, 170, sala 404</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 mr-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 3.683a1 1 0 01-1.854.74l-.47-1.176c-1.1.847-2.733 1.9-4.32 3.14a13.37 13.37 0 005.11 5.11c1.24-.814 2.293-2.454 3.14-3.593l1.176-.47a1 1 0 01.74-1.854l3.683.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-1.5c-4.8 0-9.28-2.6-11.75-6.53a16.5 16.5 0 010-9.94A1 1 0 012 3z"></path></svg>
+                        <div>
+                            <p class="font-semibold text-lg mb-1">WhatsApp</p>
+                            <p class="text-gray-600">(32) 99909-4126</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 mr-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                        <div>
+                            <p class="font-semibold text-lg mb-1">Email</p>
+                            <p class="text-gray-600">marianadelgadodentista@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
     <div id="pixModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
             <h3 class="text-2xl font-bold text-center mb-6 text-textdark">Pagamento PIX</h3>
@@ -458,7 +493,7 @@
             
             <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
                 <p class="text-xs text-textdark mb-2">Chave PIX:</p>
-                <p id="pixKey" class="font-mono text-sm break-all text-textdark">galeria.coworking@exemplo.com</p>
+                <p id="pixKey" class="font-mono text-sm break-all text-textdark">marianadelgadodentista@gmail.com</p>
                 <button onclick="copyPixKey()" class="mt-2 text-accent text-sm hover:underline">Copiar chave</button>
             </div>
             
@@ -470,7 +505,7 @@
                 <button onclick="closePixModal()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
                     Cancelar
                 </button>
-                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                     Confirmar Pagamento
                 </button>
             </div>
@@ -487,7 +522,7 @@
                 <p id="confirmationEmail" class="text-textdark font-semibold"></p>
                 <p class="text-xs text-gray-600 mt-2">Verifique sua caixa de entrada e spam</p>
             </div>
-            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                 Fechar
             </button>
         </div>
@@ -519,6 +554,9 @@
         function generateCalendar() {
             const calendar = document.getElementById('calendar');
             const today = new Date();
+            // CORREÇÃO: Remove o tempo para a comparação de "data passada"
+            const todayNoTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()); 
+            
             const currentMonth = today.getMonth();
             const currentYear = today.getFullYear();
             
@@ -555,8 +593,12 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(currentYear, currentMonth, day);
                 const dateString = date.toISOString().split('T')[0];
-                const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-                const isPast = date < today;
+                
+                // Usa todayNoTime para verificar se é passado corretamente
+                const isPast = date < todayNoTime; 
+                
+                const isToday = day === todayNoTime.getDate() && currentMonth === todayNoTime.getMonth() && currentYear === todayNoTime.getFullYear();
+                
                 const dayOccupied = occupiedSlots[dateString];
                 const hasOccupied = dayOccupied && dayOccupied.length > 0;
                 
@@ -570,7 +612,6 @@
                 } else if (hasOccupied) {
                     dayClass += ' bg-yellow-100 text-yellow-800 tooltip';
                     const occupiedInfo = dayOccupied.map(slot => {
-                        const time = slot.time;
                         const client = slot.client;
                         
                         // Determine period based on time and booking type
@@ -582,7 +623,7 @@
                             return 'Dia Completo (08h-18h)';
                         } else {
                             // For hourly bookings, show specific time
-                            return `${time}`;
+                            return `${slot.time}`;
                         }
                     });
                     
@@ -858,11 +899,11 @@
 
 ${equipmentList}📍 ENDEREÇO:
 Galeria Coworking Odontológico
-[Seu endereço completo aqui]
+Praça Rui Barbosa, 170, sala 404
 
 📞 CONTATO:
-WhatsApp: (11) 99999-9999
-Email: contato@galeriacoworking.com
+WhatsApp: (32) 99909-4126
+Email: marianadelgadodentista@gmail.com
 
 ⚠️ IMPORTANTE:
 • Chegue 15 minutos antes do horário
@@ -883,7 +924,7 @@ Obrigado por escolher a Galeria Coworking!`
             // Mostrar loading
             const loadingMsg = document.createElement('div');
             loadingMsg.innerHTML = '📧 Enviando email...';
-            loadingMsg.style.cssText = 'position:fixed;top:20px;right:20px;background:#06B6D4;color:white;padding:10px;border-radius:5px;z-index:9999;'; // Corrigido para a nova paleta
+            loadingMsg.style.cssText = 'position:fixed;top:20px;right:20px;background:#996E5C;color:white;padding:10px;border-radius:5px;z-index:9999;'; // Corrigido para a nova paleta
             document.body.appendChild(loadingMsg);
             
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
