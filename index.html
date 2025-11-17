@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeria Coworking Odontológico</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -88,7 +93,7 @@
         }
         
         .selected {
-            background-color: #996E5C !important; /* Corrigido para a cor accent */
+            background-color: #06B6D4 !important; /* Usando o ciano de destaque */
             color: white;
             font-weight: bold;
         }
@@ -242,7 +247,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Por Hora</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 70<span class="text-lg text-gray-500">/hora</span></div>
                         <p class="text-gray-600 mb-6">Ideal para consultas rápidas e procedimentos simples</p>
-                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
+                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -261,7 +266,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Por Turno</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 150<span class="text-lg text-gray-500">/turno</span></div>
                         <p class="text-gray-600 mb-6">Manhã: 08h às 12h | Tarde: 13h às 17h</p>
-                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
+                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -280,7 +285,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Dia Completo</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 300<span class="text-lg text-gray-500">/dia</span></div>
                         <p class="text-gray-600 mb-6">8h às 18h - Para dias intensivos de atendimento</p>
-                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
+                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -433,7 +438,7 @@
                                     <span id="totalPrice" class="text-2xl font-bold text-accent">R$ 0,00</span>
                                 </div>
                                 
-                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors font-semibold button-effect">
+                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors font-semibold button-effect">
                                     Pagar com PIX
                                 </button>
                             </div>
@@ -444,41 +449,6 @@
         </div>
     </section>
 
-    <section id="contact" class="py-16 bg-secondary">
-        <div class="container mx-auto px-6">
-            <h3 class="text-4xl font-bold text-center text-textdark mb-12">Informações da Galeria</h3>
-            
-            <div class="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
-                <div class="space-y-6 text-textdark">
-                    
-                    <div class="flex items-start">
-                        <svg class="w-6 h-6 mr-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a6 6 0 00-6 6c0 1.5.78 3.02 1.83 4.29l3.58 3.58a1 1 0 001.41 0l3.58-3.58C15.22 11.02 16 9.5 16 8a6 6 0 00-6-6zm0 8a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
-                        <div>
-                            <p class="font-semibold text-lg mb-1">Endereço</p>
-                            <p class="text-gray-600">Galeria Coworking Odontológico<br>Praça rui barbosa, 170, sala 404</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 mr-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 3.683a1 1 0 01-1.854.74l-.47-1.176c-1.1.847-2.733 1.9-4.32 3.14a13.37 13.37 0 005.11 5.11c1.24-.814 2.293-2.454 3.14-3.593l1.176-.47a1 1 0 01.74-1.854l3.683.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-1.5c-4.8 0-9.28-2.6-11.75-6.53a16.5 16.5 0 010-9.94A1 1 0 012 3z"></path></svg>
-                        <div>
-                            <p class="font-semibold text-lg mb-1">WhatsApp</p>
-                            <p class="text-gray-600">(32) 99909-4126</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 mr-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
-                        <div>
-                            <p class="font-semibold text-lg mb-1">Email</p>
-                            <p class="text-gray-600">marianadelgadodentista@gmail.com</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-    </section>
     <div id="pixModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
             <h3 class="text-2xl font-bold text-center mb-6 text-textdark">Pagamento PIX</h3>
@@ -493,7 +463,7 @@
             
             <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
                 <p class="text-xs text-textdark mb-2">Chave PIX:</p>
-                <p id="pixKey" class="font-mono text-sm break-all text-textdark">marianadelgadodentista@gmail.com</p>
+                <p id="pixKey" class="font-mono text-sm break-all text-textdark">galeria.coworking@exemplo.com</p>
                 <button onclick="copyPixKey()" class="mt-2 text-accent text-sm hover:underline">Copiar chave</button>
             </div>
             
@@ -505,7 +475,7 @@
                 <button onclick="closePixModal()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
                     Cancelar
                 </button>
-                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
+                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
                     Confirmar Pagamento
                 </button>
             </div>
@@ -522,41 +492,89 @@
                 <p id="confirmationEmail" class="text-textdark font-semibold"></p>
                 <p class="text-xs text-gray-600 mt-2">Verifique sua caixa de entrada e spam</p>
             </div>
-            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
+            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
                 Fechar
             </button>
         </div>
     </div>
 
     <script>
+        
+        // ----------------------------------------------------------------------
+        // 2. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE FIRESTORE
+        // ----------------------------------------------------------------------
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOxFGh3c4t2eoukBA_apqRe83nursanug",
+            authDomain: "mari-projeto-f5877.firebaseapp.com",
+            projectId: "mari-projeto-f5877",
+            storageBucket: "mari-projeto-f5877.firebasestorage.app",
+            messagingSenderId: "360074059778",
+            appId: "1:360074059778:web:e42b2d8b6d18cf7992071b",
+            measurementId: "G-DPNMK7E2KB"
+        };
+        
+        // Inicializa o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        // Inicializa o Firestore (Banco de Dados)
+        const db = firebase.firestore(); 
+        
+        // Variáveis globais
         let selectedDate = null;
         let selectedPlan = null;
         let selectedPlanPrice = 0;
+        let occupiedSlots = {}; // Objeto que será preenchido com dados do Firestore
+
         
-        // Occupied slots simulation (in real app, this would come from backend)
-        const occupiedSlots = {
-            '2024-12-15': [
-                { time: '09:00', client: 'Dr. Silva - Consulta' },
-                { time: '14:00', client: 'Dra. Santos - Consulta' }
-            ],
-            '2024-12-16': [
-                { time: '08:00', client: 'Dr. Costa - Turno Manhã' },
-                { time: '15:00', client: 'Dra. Lima - Consulta' }
-            ],
-            '2024-12-17': [
-                { time: '08:00', client: 'Dr. Oliveira - Dia Completo' }
-            ],
-            '2024-12-18': [
-                { time: '13:00', client: 'Dra. Ferreira - Turno Tarde' }
-            ]
-        };
+        // ----------------------------------------------------------------------
+        // 3. FUNÇÃO DE LEITURA (FETCH) DOS DADOS DO FIRESTORE
+        // ----------------------------------------------------------------------
+        async function fetchOccupiedSlots() {
+            try {
+                // Busca todas as reservas ativas na coleção "reservations"
+                const snapshot = await db.collection("reservations").get(); 
+                
+                // Limpa o objeto de ocupação antes de preencher
+                occupiedSlots = {}; 
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.date; // Espera o formato 'YYYY-MM-DD'
+                    const clientName = data.name;
+                    const timeSlot = data.timeSlot;
+
+                    let clientDescription = '';
+                    if (data.plan === 'hora') {
+                        clientDescription = `${clientName} - Consulta`;
+                    } else if (data.plan === 'turno') {
+                        clientDescription = timeSlot === '08:00' ? `${clientName} - Turno Manhã` : `${clientName} - Turno Tarde`;
+                    } else if (data.plan === 'dia') {
+                        clientDescription = `${clientName} - Dia Completo`;
+                    }
+                    
+                    if (!occupiedSlots[date]) {
+                        occupiedSlots[date] = [];
+                    }
+                    occupiedSlots[date].push({
+                        time: timeSlot,
+                        client: clientDescription
+                    });
+                });
+                
+                console.log("Reservas do Firestore carregadas.", occupiedSlots);
+                generateCalendar(); // Gera o calendário com os dados reais do DB
+                
+            } catch (error) {
+                console.error("Erro ao buscar reservas do Firestore:", error);
+                generateCalendar();
+            }
+        }
+        
+        // O restante das funções (generateCalendar, selectDate, updateTimeSlots, selectPlan, 
+        // calculateTotal, scrollToBooking) usam o objeto 'occupiedSlots' preenchido pelo Firestore.
 
         function generateCalendar() {
             const calendar = document.getElementById('calendar');
             const today = new Date();
-            // CORREÇÃO: Remove o tempo para a comparação de "data passada"
-            const todayNoTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()); 
-            
             const currentMonth = today.getMonth();
             const currentYear = today.getFullYear();
             
@@ -584,21 +602,16 @@
                 <div class="grid grid-cols-7 gap-1">
             `;
             
-            // Empty cells for days before the first day of the month
             for (let i = 0; i < startingDayOfWeek; i++) {
                 calendarHTML += '<div class="p-2"></div>';
             }
             
-            // Days of the month
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(currentYear, currentMonth, day);
-                const dateString = date.toISOString().split('T')[0];
+                const dateString = date.toISOString().split('T')[0]; 
+                const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
                 
-                // Usa todayNoTime para verificar se é passado corretamente
-                const isPast = date < todayNoTime; 
-                
-                const isToday = day === todayNoTime.getDate() && currentMonth === todayNoTime.getMonth() && currentYear === todayNoTime.getFullYear();
-                
+                const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate()); 
                 const dayOccupied = occupiedSlots[dateString];
                 const hasOccupied = dayOccupied && dayOccupied.length > 0;
                 
@@ -608,21 +621,19 @@
                 if (isPast) {
                     dayClass += ' text-gray-400 cursor-not-allowed';
                 } else if (isToday) {
-                    dayClass += ' bg-primary text-textdark font-semibold'; // Corrigido para a nova paleta
+                    dayClass += ' bg-primary text-textdark font-semibold';
                 } else if (hasOccupied) {
                     dayClass += ' bg-yellow-100 text-yellow-800 tooltip';
                     const occupiedInfo = dayOccupied.map(slot => {
                         const client = slot.client;
                         
-                        // Determine period based on time and booking type
-                        if (client.includes('Turno Manhã') || client.includes('Manhã')) {
+                        if (client.includes('Turno Manhã')) {
                             return 'Manhã (08h-12h)';
-                        } else if (client.includes('Turno Tarde') || client.includes('Tarde')) {
+                        } else if (client.includes('Turno Tarde')) {
                             return 'Tarde (13h-17h)';
                         } else if (client.includes('Dia Completo')) {
                             return 'Dia Completo (08h-18h)';
                         } else {
-                            // For hourly bookings, show specific time
                             return `${slot.time}`;
                         }
                     });
@@ -630,7 +641,7 @@
                     const uniqueInfo = [...new Set(occupiedInfo)];
                     tooltipContent = `<span class="tooltiptext">Ocupado: ${uniqueInfo.join(', ')}</span>`;
                 } else {
-                    dayClass += ' hover:bg-primary hover:bg-opacity-50'; // Corrigido para a nova paleta
+                    dayClass += ' hover:bg-primary hover:bg-opacity-50';
                 }
                 
                 calendarHTML += `<div class="${dayClass}" onclick="${!isPast ? `selectDate('${dateString}', this)` : ''}">${day}${tooltipContent}</div>`;
@@ -641,16 +652,13 @@
         }
 
         function selectDate(dateString, element) {
-            // Remove previous selection
             document.querySelectorAll('.calendar-day').forEach(day => {
                 day.classList.remove('selected');
             });
             
-            // Add selection to clicked day
             element.classList.add('selected');
             selectedDate = dateString;
             
-            // Update time slots
             updateTimeSlots();
         }
 
@@ -669,13 +677,11 @@
                     }
                 });
             } else if (selectedPlan === 'turno') {
-                // Check if morning shift is available (no bookings from 08:00-12:00)
                 const morningOccupied = occupiedTimes.some(time => {
                     const hour = parseInt(time.split(':')[0]);
                     return hour >= 8 && hour < 12;
                 }) || occupiedSlots_day.some(slot => slot.client.includes('Dia Completo'));
                 
-                // Check if afternoon shift is available (no bookings from 13:00-17:00)
                 const afternoonOccupied = occupiedTimes.some(time => {
                     const hour = parseInt(time.split(':')[0]);
                     return hour >= 13 && hour < 17;
@@ -684,7 +690,6 @@
                 if (!morningOccupied) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
                 if (!afternoonOccupied) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
             } else if (selectedPlan === 'dia') {
-                // Check if entire day is available
                 const dayOccupied = occupiedSlots_day.length > 0;
                 if (!dayOccupied) options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
             }
@@ -706,22 +711,19 @@
             updateTimeSlots();
             calculateTotal();
             
-            // Scroll to booking section
             document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
         }
 
         function calculateTotal() {
             let total = selectedPlanPrice;
-            let hours = 1; // Default for hour plan
+            let hours = 1; 
             
-            // Determine hours based on selected plan
             if (selectedPlan === 'turno') {
-                hours = 4; // 4 hours per shift
+                hours = 4;
             } else if (selectedPlan === 'dia') {
-                hours = 10; // 10 hours per day
+                hours = 10;
             }
             
-            // Add equipment costs multiplied by hours
             const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
             checkboxes.forEach(checkbox => {
                 switch(checkbox.value) {
@@ -732,7 +734,7 @@
                         total += 5 * hours;
                         break;
                     case 'autoclave':
-                        total += 20; // Fixed price per cycle
+                        total += 20; 
                         break;
                     case 'laser':
                         total += 20 * hours;
@@ -747,13 +749,13 @@
                         total += 30 * hours;
                         break;
                     case 'kitCirurgia':
-                        total += 80; // Fixed price per kit
+                        total += 80; 
                         break;
                     case 'kitClareamentoConsultorio':
                         total += 65 * hours;
                         break;
                     case 'kitClareamentoCaseiro':
-                        total += 90; // Fixed price per kit
+                        total += 90; 
                         break;
                 }
             });
@@ -788,14 +790,16 @@
             selectedPlanPrice = 0;
             document.getElementById('selectedPlan').textContent = 'Selecione um plano acima';
             document.getElementById('totalPrice').textContent = 'R$ 0,00';
-            generateCalendar();
-        }
-
-        function confirmPayment() {
-            // Simulate payment confirmation
-            closePixModal();
             
-            // Get form data
+            // Recarrega os dados do DB para atualizar o calendário visualmente
+            fetchOccupiedSlots(); 
+        }
+        
+        // ----------------------------------------------------------------------
+        // 4. FUNÇÃO DE CONFIRMAÇÃO E SALVAMENTO NO FIRESTORE
+        // ----------------------------------------------------------------------
+        function confirmPayment() {
+            // ... (Get form data)
             const timeSlot = document.getElementById('timeSlot').value;
             const clientName = document.getElementById('clientName').value;
             const clientEmail = document.getElementById('email').value;
@@ -804,7 +808,11 @@
             const selectedTimeText = document.getElementById('timeSlot').selectedOptions[0].text;
             const totalAmount = document.getElementById('totalPrice').textContent;
             
-            // Get selected equipment
+            if (!selectedDate || !selectedPlan || !timeSlot) {
+                alert('Por favor, preencha a data, o plano e o horário.');
+                return;
+            }
+
             const selectedEquipment = [];
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
                 const equipmentNames = {
@@ -835,44 +843,65 @@
                 clientDescription = `${clientName} - Dia Completo`;
             }
             
-            // Add to occupied slots
-            if (!occupiedSlots[selectedDate]) {
-                occupiedSlots[selectedDate] = [];
-            }
-            occupiedSlots[selectedDate].push({
-                time: timeSlot,
-                client: clientDescription
-            });
+            closePixModal(); 
             
-            // Send email confirmation to client
-            sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment);
+            const reservationData = {
+                name: clientName,
+                cro: clientCRO,
+                phone: clientPhone,
+                email: clientEmail,
+                date: selectedDate, 
+                timeSlot: timeSlot,
+                timeSlotText: selectedTimeText, 
+                plan: selectedPlan,
+                totalAmount: totalAmount,
+                equipment: selectedEquipment,
+                status: 'Confirmado',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
             
-            // Send notification email to owner
-            sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment);
-            
-            // Show confirmation email in success modal
-            document.getElementById('confirmationEmail').textContent = clientEmail;
-            
-            // Show success modal
-            document.getElementById('successModal').classList.remove('hidden');
-            document.getElementById('successModal').classList.add('flex');
+            // 🚀 SALVA A RESERVA NO FIRESTORE
+            db.collection("reservations").add(reservationData)
+                .then((docRef) => {
+                    console.log("✅ Reserva salva com sucesso no Firestore. ID: ", docRef.id);
+                    
+                    // ATUALIZA O OBJETO LOCAL E RE-RENDERIZA O CALENDÁRIO IMEDIATAMENTE
+                    if (!occupiedSlots[selectedDate]) {
+                        occupiedSlots[selectedDate] = [];
+                    }
+                    occupiedSlots[selectedDate].push({
+                        time: timeSlot,
+                        client: clientDescription
+                    });
+                    generateCalendar();
+
+                    // Envio de E-mails
+                    sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment);
+                    sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment);
+                    
+                    // Mostra Modal de Sucesso
+                    document.getElementById('confirmationEmail').textContent = clientEmail;
+                    document.getElementById('successModal').classList.remove('hidden');
+                    document.getElementById('successModal').classList.add('flex');
+                    
+                })
+                .catch((error) => {
+                    console.error("❌ Erro ao salvar reserva no Firestore: ", error);
+                    alert("Erro ao finalizar a reserva. Por favor, tente novamente.");
+                    document.getElementById('pixModal').classList.remove('hidden');
+                    document.getElementById('pixModal').classList.add('flex');
+                });
         }
 
+
         function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
-            // 📧 EMAILJS - CONFIGURAÇÃO SIMPLES E GRATUITA
-            // 1. Acesse: https://www.emailjs.com/
-            // 2. Cadastre-se grátis (200 emails/mês)
-            // 3. Vá em "Email Services" → "Add New Service" → Escolha Gmail
-            // 4. Vá em "Email Templates" → "Create New Template"
-            // 5. Copie as IDs e substitua abaixo
-            
+            // EmailJS Configuration
             const equipmentList = equipment.length > 0 ? 
                 `Equipamentos/Materiais Adicionais:\n${equipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
             
-            // SUAS CHAVES DO EMAILJS CONFIGURADAS:
-            const SERVICE_ID = 'service_g1yi8ap';
-            const TEMPLATE_ID = 'template_xiqxxfh';
-            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
+            const SERVICE_ID = 'service_g1yi8ap'; // Substitua
+            const TEMPLATE_ID = 'template_xiqxxfh'; // Substitua
+            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T'; // Substitua
             
             const templateParams = {
                 user_email: email,
@@ -899,11 +928,11 @@
 
 ${equipmentList}📍 ENDEREÇO:
 Galeria Coworking Odontológico
-Praça Rui Barbosa, 170, sala 404
+[Seu endereço completo aqui]
 
 📞 CONTATO:
-WhatsApp: (32) 99909-4126
-Email: marianadelgadodentista@gmail.com
+WhatsApp: (11) 99999-9999
+Email: contato@galeriacoworking.com
 
 ⚠️ IMPORTANTE:
 • Chegue 15 minutos antes do horário
@@ -913,87 +942,24 @@ Email: marianadelgadodentista@gmail.com
 Obrigado por escolher a Galeria Coworking!`
             };
             
-            // DIAGNÓSTICO E ENVIO DO EMAIL:
-            console.log('🔍 DIAGNÓSTICO DO EMAIL:');
-            console.log('Service ID:', SERVICE_ID);
-            console.log('Template ID:', TEMPLATE_ID);
-            console.log('Public Key:', PUBLIC_KEY);
-            console.log('Email destino:', email);
-            console.log('Parâmetros:', templateParams);
-            
-            // Mostrar loading
-            const loadingMsg = document.createElement('div');
-            loadingMsg.innerHTML = '📧 Enviando email...';
-            loadingMsg.style.cssText = 'position:fixed;top:20px;right:20px;background:#996E5C;color:white;padding:10px;border-radius:5px;z-index:9999;'; // Corrigido para a nova paleta
-            document.body.appendChild(loadingMsg);
-            
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
                 .then(function(response) {
                     console.log('✅ EMAIL ENVIADO COM SUCESSO!');
-                    console.log('Status:', response.status);
-                    console.log('Resposta:', response.text);
-                    
-                    // Remover loading e mostrar sucesso
-                    loadingMsg.remove();
-                    const successMsg = document.createElement('div');
-                    successMsg.innerHTML = '✅ Email enviado!';
-                    successMsg.style.cssText = 'position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:10px;border-radius:5px;z-index:9999;';
-                    document.body.appendChild(successMsg);
-                    setTimeout(() => successMsg.remove(), 3000);
-                    
                 }, function(error) {
-                    console.log('❌ ERRO AO ENVIAR EMAIL:');
-                    console.log('Erro completo:', error);
-                    console.log('Status:', error.status);
-                    console.log('Texto:', error.text);
-                    
-                    // Remover loading e mostrar erro
-                    loadingMsg.remove();
-                    
-                    let errorMessage = '❌ Erro ao enviar email:\n\n';
-                    
-                    if (error.status === 400) {
-                        errorMessage += '🔧 POSSÍVEIS SOLUÇÕES:\n';
-                        errorMessage += '1. Verifique se o Service ID está correto\n';
-                        errorMessage += '2. Verifique se o Template ID está correto\n';
-                        errorMessage += '3. Verifique se a Public Key está correta\n';
-                        errorMessage += '4. Verifique se o template tem as variáveis corretas\n\n';
-                        errorMessage += 'Service ID atual: ' + SERVICE_ID + '\n';
-                        errorMessage += 'Template ID atual: ' + TEMPLATE_ID;
-                    } else if (error.status === 401) {
-                        errorMessage += '🔑 ERRO DE AUTENTICAÇÃO:\n';
-                        errorMessage += '1. Public Key incorreta\n';
-                        errorMessage += '2. Conta EmailJS não verificada\n';
-                        errorMessage += '3. Limite de emails excedido';
-                    } else if (error.status === 403) {
-                        errorMessage += '🚫 ACESSO NEGADO:\n';
-                        errorMessage += '1. Conta EmailJS suspensa\n';
-                        errorMessage += '2. Domínio não autorizado\n';
-                        errorMessage += '3. Template não público';
-                    } else {
-                        errorMessage += 'Código do erro: ' + error.status + '\n';
-                        errorMessage += 'Detalhes: ' + error.text;
-                    }
-                    
-                    alert(errorMessage);
+                    console.log('❌ ERRO AO ENVIAR EMAIL:', error);
                 });
-            
-
         }
 
         function sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment) {
-            // 📧 EMAIL PARA O PROPRIETÁRIO DO COWORKING
-            
+            // EmailJS Configuration
             const equipmentList = selectedEquipment.length > 0 ? 
                 `Equipamentos/Materiais Solicitados:\n${selectedEquipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
             
-            // CONFIGURAÇÕES DO EMAILJS (mesmas do cliente)
-            const SERVICE_ID = 'service_g1yi8ap';
-            const TEMPLATE_ID = 'template_xiqxxfh';
-            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
+            const SERVICE_ID = 'service_g1yi8ap'; // Substitua
+            const TEMPLATE_ID = 'template_xiqxxfh'; // Substitua
+            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T'; // Substitua
             
-            // 🔧 SUBSTITUA PELO SEU EMAIL DE PROPRIETÁRIO:
-            const OWNER_EMAIL = 'proprietario@galeriacoworking.com'; // ← COLOQUE SEU EMAIL AQUI
+            const OWNER_EMAIL = 'proprietario@galeriacoworking.com'; // ⚠️ SUBSTITUA PELO SEU EMAIL
             
             const ownerTemplateParams = {
                 user_email: OWNER_EMAIL,
@@ -1037,15 +1003,11 @@ ${equipmentList}💰 STATUS DO PAGAMENTO:
 Sistema Galeria Coworking`
             };
             
-            // ENVIO DO EMAIL PARA O PROPRIETÁRIO
-            console.log('📧 Enviando notificação para o proprietário...');
-            
             emailjs.send(SERVICE_ID, TEMPLATE_ID, ownerTemplateParams, PUBLIC_KEY)
                 .then(function(response) {
                     console.log('✅ Notificação enviada para o proprietário!');
                 }, function(error) {
                     console.log('❌ Erro ao enviar notificação para proprietário:', error);
-                    // Não mostra erro para o cliente, apenas registra no console
                 });
         }
 
@@ -1055,8 +1017,8 @@ Sistema Galeria Coworking`
         document.getElementById('bookingForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            if (!selectedDate || !selectedPlan) {
-                alert('Por favor, selecione uma data e um plano.');
+            if (!selectedDate || !selectedPlan || !document.getElementById('timeSlot').value) {
+                alert('Por favor, selecione uma data, um plano e um horário.');
                 return;
             }
             
@@ -1067,17 +1029,17 @@ Sistema Galeria Coworking`
             document.getElementById('pixModal').classList.add('flex');
         });
 
-        // Add event listeners for equipment checkboxes
         document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', calculateTotal);
         });
 
         // Initialize EmailJS
-        emailjs.init('ckNNBdvQMD-hnrc_T');
+        emailjs.init('ckNNBdvQMD-hnrc_T'); // ⚠️ Substitua pela sua Public Key do EmailJS
 
-        // Initialize calendar on page load
+        // Initialize calendar and fetch data on page load
         document.addEventListener('DOMContentLoaded', function() {
-            generateCalendar();
+            // 🚀 CHAMA A FUNÇÃO QUE BUSCA OS DADOS DO FIRESTORE E GERA O CALENDÁRIO
+            fetchOccupiedSlots(); 
         });
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b2c32380b19ca3',t:'MTc1OTg5NjM1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>

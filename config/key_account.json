@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "booming-tooling-477821-q6",
+  "private_key_id": "a5ebb5d4c35c17f425ef62959edeedd6c9a86907",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCuWZg6kKMGiuQL\nWehZETtm7EcdK6SePpsNVDVApQBPYLO5cdxuqnvHVOaxvofrW12MayTcrb+/JisH\n+ADk5MAj1fizDM3gFdSxjwRXf+PD+Fz19MeEeVy+MX4sVY8SVsmk5px9uXFI87us\nuBTVXOLsTHl9UbosmL3R1iHu5dWe814dW3wyVZL0+JNZQOU1NqqouB2VAkHMfosY\noqHwdFG9K8iquoOROMEidLClBBwOoPR82awLJEtBAyEK1CPZQRHc6I+blS0byWbl\nB2QVy4LqBR/GHwNNODe5XBXLLGhLvNWNojmpTG0hDYKKqRDQ7uVdqZBT5Zpe7rVe\nqzjxBqKpAgMBAAECggEADftl66ZvSIZJcQaaDVCGNsQSlOqL1lv3c8txxNgmrPb4\nmtHgh2h5KjxrDsyUmmGWoDz0dRUjCDmPoGE5cyHMLeOKQROxC/w8NSwewUSil7P6\ngogJmxxffWo7L+OBqIsYuzZ6TNPbG6pePeT6WL0M/r3ITW5JM6vhJyuYx4+bgNZq\nAvzGydmR4wCzIZ9CF98yImRYXNr88cYmF1DPsD3H5C4xIj3pWtuO7rqCqzErcUdG\nmPHMgV0epK+xo0AD2qSa5CQBErIaqWjUNHTZ1wBRhVLmavfgr3wgTlfTZBLS51gm\npkNSdAs2q6XQdY6bBmghzKzCOT4svo1plBWdcNuIgQKBgQDpdn3s8trj8Qptiwkp\ngBfalC5bNDmJwDPPiIuN4msNYNEoHIjKnLjbS24r7v9r2KxK9x7SEDuA5xmObGkR\n3GsC+l+E2vFLMbDkA5Yakzfg0E61LBtc+L0AuQmXJ00Mx/v/bzuNASM2QGJby9/E\nURqREdhYKhRzj+ko5YQjcggewQKBgQC/LkLfQf6fpO6j8e0snqnvszHwAhoViyL7\nGtp49tcaWfzS025lffWZnxYibn9nKaJNVKk7zacq4G3TNYdzOgEBWBk4mhQmhQ/+\nbZxhOeVUHHGwZSzpGpzPQOdDee+mz1WIINy7w1gr0Lq7nfc9OoWLmhnr/sm2RMd2\nmm+ADCDl6QKBgCttlkkgd+VU7kqoRWEJ6eYIEIN4uIdOUJT3YnZXOvC3JNEgVbXS\n53QrmOflQnAuUwZy57HNwTPeSVu8AOOIrANWzbPqAl6pdK1FmYOCBS/1r951wPVP\nc+ERip4qemO5Q8AlUd+N6Z3q5iELUKm1KIr51dO4qCtDBu1LnIP3b1lBAoGBAI9E\nQ6i68+z+1DbXnTzKyd5vEwUhDhsG4Xf7b60mjZuZw/TZrOkxs1Mj/Jpg4+iTMqVw\nxEGko5lmBec5PgADf61aL8xS6rbTEGFCEuZpVInrpubhav5kiw5lPOk7/3Op/Ba/\nSasLgI+VI9plTln7+Qfcu4A2t0J32GHw6Y2ziRPBAoGBALcf/PvnKYjAnitLgR8O\nr7G923IanKPZjQxJ99zIUPQUUwRm77gJFrQsO1T3wSRtMQC5MVD1o6XfXv6TyUpn\n6K4YLcGDMxY+n74HhuZBj17W6ZZfPULycmXixXC+scH8g8qG+k2BwP9xmq4cUsaL\nfL4vNwh4K3ZemrvsCJtFVy2t\n-----END PRIVATE KEY-----\n",
+  "client_email": "brunomirandamagalhaes@booming-tooling-477821-q6.iam.gserviceaccount.com",
+  "client_id": "113363277028833231749",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/brunomirandamagalhaes%40booming-tooling-477821-q6.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
