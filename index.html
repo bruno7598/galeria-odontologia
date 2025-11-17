@@ -151,6 +151,586 @@
             color: #F5F5DC; /* Bege suave */
         }
     </style>
+    
+    <script>
+        // 2. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE FIRESTORE
+        // ⚠️ SUBSTITUA PELAS SUAS CHAVES REAIS DO CONSOLE DO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOxFGh3c4t2eoukBA_apqRe83nursanug",
+            authDomain: "mari-projeto-f5877.firebaseapp.com",
+            projectId: "mari-projeto-f5877",
+            storageBucket: "mari-projeto-f5877.firebasestorage.app",
+            messagingSenderId: "360074059778",
+            appId: "1:360074059778:web:e42b2d8b6d18cf7992071b",
+            measurementId: "G-DPNMK7E2KB"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
+        let selectedDate = null;
+        let selectedPlan = null;
+        let selectedPlanPrice = 0;
+        
+        // Objeto que armazenará os slots ocupados, lidos do Firestore
+        let occupiedSlots = {}; 
+        
+        /**
+         * 3. FUNÇÃO PARA BUSCAR DADOS REAIS DO FIREBASE
+         * Esta função substitui a simulação e busca as reservas no banco.
+         */
+        async function fetchOccupiedSlots() {
+            try {
+                // Obtém todas as reservas
+                const snapshot = await db.collection("reservations").get();
+                
+                occupiedSlots = {};
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.date; 
+                    
+                    if (!occupiedSlots[date]) {
+                        occupiedSlots[date] = [];
+                    }
+                    occupiedSlots[date].push({
+                        time: data.time,
+                        client: data.clientDescription
+                    });
+                });
+                
+                console.log("Reservas do Firestore carregadas.", occupiedSlots);
+                generateCalendar(); // Gera o calendário com os dados atualizados
+                
+            } catch (error) {
+                console.error("Erro ao buscar reservas do Firestore:", error);
+                // Gera o calendário mesmo com erro, usando dados vazios se houver falha na leitura
+                generateCalendar(); 
+            }
+        }
+
+        function generateCalendar() {
+            const calendar = document.getElementById('calendar');
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            let calendarHTML = `
+                <div class="text-center mb-4">
+                    <h5 class="text-lg font-semibold">${monthNames[currentMonth]} ${currentYear}</h5>
+                </div>
+                <div class="grid grid-cols-7 gap-1 mb-2">
+                    <div class="text-center text-sm font-medium text-gray-500 p-2">Dom</div>
+                    <div class="text-center text-sm font-medium text-gray-500 p-2">Seg</div>
+                    <div class="text-center text-sm font-medium text-gray-500 p-2">Ter</div>
+                    <div class="text-center text-sm font-medium text-gray-500 p-2">Qua</div>
+                    <div class="text-center text-sm font-medium text-gray-500 p-2">Qui</div>
+                    <div class="text-center text-sm font-medium text-gray-500 p-2">Sex</div>
+                    <div class="text-center text-sm font-medium text-gray-500 p-2">Sáb</div>
+                </div>
+                <div class="grid grid-cols-7 gap-1">
+            `;
+            
+            // Empty cells for days before the first day of the month
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                calendarHTML += '<div class="p-2"></div>';
+            }
+            
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(currentYear, currentMonth, day);
+                // Formato YYYY-MM-DD
+                const dateString = date.toISOString().split('T')[0];
+                const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+                
+                // Verifica se a data é anterior ao dia atual (ignorando hora)
+                const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate()); 
+                
+                const dayOccupied = occupiedSlots[dateString];
+                const hasOccupied = dayOccupied && dayOccupied.length > 0;
+                
+                let dayClass = 'calendar-day p-2 text-center cursor-pointer rounded-lg';
+                let tooltipContent = '';
+                
+                if (isPast) {
+                    dayClass += ' text-gray-400 cursor-not-allowed';
+                } else if (isToday) {
+                    dayClass += ' bg-primary text-textdark font-semibold'; // Corrigido para a nova paleta
+                } else if (hasOccupied) {
+                    dayClass += ' bg-yellow-100 text-yellow-800 tooltip';
+                    const occupiedInfo = dayOccupied.map(slot => {
+                        const client = slot.client;
+                        
+                        if (client.includes('Manhã')) {
+                            return 'Manhã (08h-12h)';
+                        } else if (client.includes('Tarde')) {
+                            return 'Tarde (13h-17h)';
+                        } else if (client.includes('Dia Completo')) {
+                            return 'Dia Completo (08h-18h)';
+                        } else {
+                            // Para reservas por hora, mostra o tempo específico
+                            return `${slot.time}`;
+                        }
+                    });
+                    
+                    const uniqueInfo = [...new Set(occupiedInfo)];
+                    tooltipContent = `<span class="tooltiptext">Ocupado: ${uniqueInfo.join(', ')}</span>`;
+                } else {
+                    dayClass += ' hover:bg-primary hover:bg-opacity-50'; // Corrigido para a nova paleta
+                }
+                
+                calendarHTML += `<div class="${dayClass}" onclick="${!isPast ? `selectDate('${dateString}', this)` : ''}">${day}${tooltipContent}</div>`;
+            }
+            
+            calendarHTML += '</div>';
+            calendar.innerHTML = calendarHTML;
+        }
+
+        function selectDate(dateString, element) {
+            // Remove previous selection
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.classList.remove('selected');
+            });
+            
+            // Add selection to clicked day
+            element.classList.add('selected');
+            selectedDate = dateString;
+            
+            // Update time slots
+            updateTimeSlots();
+        }
+
+        /**
+         * 4. FUNÇÃO updateTimeSlots() CORRIGIDA
+         * Adicionado checagem de Plano e Data.
+         */
+        function updateTimeSlots() {
+            const timeSlot = document.getElementById('timeSlot');
+            
+            // Checa se o plano foi selecionado
+            if (!selectedPlan) {
+                timeSlot.innerHTML = '<option value="">Selecione um plano no topo</option>';
+                return;
+            }
+
+            // Checa se a data foi selecionada
+            if (!selectedDate) {
+                timeSlot.innerHTML = '<option value="">Selecione a data no calendário</option>';
+                return;
+            }
+
+            // --- Lógica Original de Disponibilidade ---
+            const occupiedSlots_day = occupiedSlots[selectedDate] || [];
+            const occupiedTimes = occupiedSlots_day.map(slot => slot.time);
+            
+            let options = '<option value="">Selecione o horário</option>';
+            
+            if (selectedPlan === 'hora') {
+                const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+                hours.forEach(hour => {
+                    if (!occupiedTimes.includes(hour)) {
+                        options += `<option value="${hour}">${hour} (1 hora)</option>`;
+                    }
+                });
+            } else if (selectedPlan === 'turno') {
+                // Checa se o turno da manhã está ocupado por hora ou por dia completo
+                const morningOccupied = occupiedTimes.some(time => {
+                    const hour = parseInt(time.split(':')[0]);
+                    return hour >= 8 && hour < 12;
+                }) || occupiedSlots_day.some(slot => slot.client.includes('Dia Completo'));
+                
+                // Checa se o turno da tarde está ocupado por hora ou por dia completo
+                const afternoonOccupied = occupiedTimes.some(time => {
+                    const hour = parseInt(time.split(':')[0]);
+                    return hour >= 13 && hour < 17;
+                }) || occupiedSlots_day.some(slot => slot.client.includes('Dia Completo'));
+                
+                if (!morningOccupied) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
+                if (!afternoonOccupied) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
+            } else if (selectedPlan === 'dia') {
+                // Checa se o dia inteiro está disponível (sem reservas)
+                const dayOccupied = occupiedSlots_day.length > 0;
+                if (!dayOccupied) options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
+            }
+            
+            timeSlot.innerHTML = options;
+        }
+
+        function selectPlan(plan, price) {
+            selectedPlan = plan;
+            selectedPlanPrice = price;
+            
+            const planNames = {
+                'hora': 'Por Hora - R$ 70,00',
+                'turno': 'Por Turno - R$ 150,00',
+                'dia': 'Dia Completo - R$ 300,00'
+            };
+            
+            document.getElementById('selectedPlan').textContent = planNames[plan];
+            updateTimeSlots(); // ESTA CHAMADA ATIVA A LÓGICA DE HORÁRIOS
+            calculateTotal();
+            
+            // Scroll to booking section
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function calculateTotal() {
+            let total = selectedPlanPrice;
+            let hours = 1; // Default for hour plan
+            
+            // Determine hours based on selected plan
+            if (selectedPlan === 'turno') {
+                hours = 4; // 4 hours per shift
+            } else if (selectedPlan === 'dia') {
+                hours = 10; // 10 hours per day
+            }
+            
+            // Add equipment costs multiplied by hours
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                switch(checkbox.value) {
+                    case 'fotopolimerizador':
+                        total += 5 * hours;
+                        break;
+                    case 'ultrassom':
+                        total += 5 * hours;
+                        break;
+                    case 'autoclave':
+                        total += 20; // Fixed price per cycle
+                        break;
+                    case 'laser':
+                        total += 20 * hours;
+                        break;
+                    case 'raioX':
+                        total += 50 * hours;
+                        break;
+                    case 'kitDentistica':
+                        total += 20 * hours;
+                        break;
+                    case 'kitProtese':
+                        total += 30 * hours;
+                        break;
+                    case 'kitCirurgia':
+                        total += 80; // Fixed price per kit
+                        break;
+                    case 'kitClareamentoConsultorio':
+                        total += 65 * hours;
+                        break;
+                    case 'kitClareamentoCaseiro':
+                        total += 90; // Fixed price per kit
+                        break;
+                }
+            });
+            
+            document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function scrollToBooking() {
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyPixKey() {
+            const pixKey = document.getElementById('pixKey').textContent;
+            navigator.clipboard.writeText(pixKey).then(() => {
+                alert('Chave PIX copiada!');
+            });
+        }
+
+        function closePixModal() {
+            document.getElementById('pixModal').classList.add('hidden');
+            document.getElementById('pixModal').classList.remove('flex');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
+            
+            // Reset form
+            document.getElementById('bookingForm').reset();
+            selectedDate = null;
+            selectedPlan = null;
+            selectedPlanPrice = 0;
+            document.getElementById('selectedPlan').textContent = 'Selecione um plano acima';
+            document.getElementById('totalPrice').textContent = 'R$ 0,00';
+            
+            // 5. ATUALIZA O CALENDÁRIO COM DADOS FRESCOS
+            fetchOccupiedSlots(); 
+        }
+
+        /**
+         * 6. FUNÇÃO confirmPayment() PARA SALVAR NO FIRESTORE
+         */
+        function confirmPayment() {
+            closePixModal();
+            
+            const timeSlot = document.getElementById('timeSlot').value;
+            const clientName = document.getElementById('clientName').value;
+            const clientEmail = document.getElementById('email').value;
+            const clientCRO = document.getElementById('cro').value;
+            const clientPhone = document.getElementById('phone').value;
+            const selectedTimeText = document.getElementById('timeSlot').selectedOptions[0].text;
+            const totalAmountText = document.getElementById('totalPrice').textContent;
+            const totalAmount = parseFloat(totalAmountText.replace('R$', '').replace(',', '.').trim());
+            
+            // Get selected equipment
+            const selectedEquipment = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const equipmentNames = {
+                    'fotopolimerizador': 'Fotopolimerizador',
+                    'ultrassom': 'Ultrassom e jato de bicarbonato',
+                    'autoclave': 'Autoclave',
+                    'laser': 'Laser de baixa potência',
+                    'raioX': 'Raio X portátil com sensor digital',
+                    'kitDentistica': 'Kit de dentística',
+                    'kitProtese': 'Kit de prótese',
+                    'kitCirurgia': 'Kit de cirurgia estéril',
+                    'kitClareamentoConsultorio': 'Kit clareamento consultório',
+                    'kitClareamentoCaseiro': 'Kit clareamento caseiro'
+                };
+                selectedEquipment.push(equipmentNames[checkbox.value]);
+            });
+            
+            let clientDescription = '';
+            if (selectedPlan === 'hora') {
+                clientDescription = `${clientName} - Consulta`;
+            } else if (selectedPlan === 'turno') {
+                if (timeSlot === '08:00') {
+                    clientDescription = `${clientName} - Turno Manhã`;
+                } else {
+                    clientDescription = `${clientName} - Turno Tarde`;
+                }
+            } else if (selectedPlan === 'dia') {
+                clientDescription = `${clientName} - Dia Completo`;
+            }
+            
+            // DADOS PARA SALVAR NO FIRESTORE
+            const reservationData = {
+                clientName: clientName,
+                cro: clientCRO,
+                phone: clientPhone,
+                email: clientEmail,
+                date: selectedDate, // YYYY-MM-DD
+                time: timeSlot,
+                clientDescription: clientDescription, // Para identificação no calendário
+                plan: selectedPlan,
+                totalAmount: totalAmount,
+                equipment: selectedEquipment,
+                paymentStatus: 'Confirmado PIX', // O pagamento é confirmado ao clicar neste botão
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // SALVA NO FIRESTORE
+            db.collection("reservations").add(reservationData)
+                .then((docRef) => {
+                    console.log("Reserva salva com ID:", docRef.id);
+                    
+                    // Envia email de confirmação
+                    sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
+                    
+                    // Envia notificação ao proprietário
+                    sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
+                    
+                    // Mostra o modal de sucesso
+                    document.getElementById('confirmationEmail').textContent = clientEmail;
+                    document.getElementById('successModal').classList.remove('hidden');
+                    document.getElementById('successModal').classList.add('flex');
+
+                    // Atualiza o calendário após o sucesso (fetchOccupiedSlots será chamado em closeSuccessModal)
+                    
+                })
+                .catch((error) => {
+                    console.error("Erro ao salvar reserva no Firestore:", error);
+                    alert("Erro ao finalizar reserva. Tente novamente ou entre em contato. Erro: " + error.message);
+                });
+        }
+
+
+        function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
+            // ... (função sendEmailConfirmation mantida, mas receberá o totalAmountText) ...
+            const equipmentList = equipment.length > 0 ? 
+                `Equipamentos/Materiais Adicionais:\n${equipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
+            
+            // SUAS CHAVES DO EMAILJS CONFIGURADAS:
+            const SERVICE_ID = 'service_g1yi8ap';
+            const TEMPLATE_ID = 'template_xiqxxfh';
+            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
+            
+            const templateParams = {
+                user_email: email,
+                user_name: name,
+                reply_to: email,
+                to_name: name,
+                from_name: 'Galeria Coworking Odontológico',
+                subject: '✅ Reserva Confirmada - Galeria Coworking',
+                message: `🦷 GALERIA COWORKING ODONTOLÓGICO
+
+✅ RESERVA CONFIRMADA!
+
+📋 DADOS DO PROFISSIONAL:
+• Nome: ${name}
+• CRO: ${cro}
+• Telefone: ${phone}
+• Email: ${email}
+
+📅 DETALHES DA RESERVA:
+• Data: ${new Date(date).toLocaleDateString('pt-BR')}
+• Horário: ${time}
+• Plano: ${plan}
+• Valor Total: ${total}
+
+${equipmentList}📍 ENDEREÇO:
+Galeria Coworking Odontológico
+[Seu endereço completo aqui]
+
+📞 CONTATO:
+WhatsApp: (11) 99999-9999
+Email: contato@galeriacoworking.com
+
+⚠️ IMPORTANTE:
+• Chegue 15 minutos antes do horário
+• Traga seus materiais básicos
+• Cancelamentos até 24h antes
+
+Obrigado por escolher a Galeria Coworking!`
+            };
+            
+            // DIAGNÓSTICO E ENVIO DO EMAIL:
+            console.log('🔍 DIAGNÓSTICO DO EMAIL:');
+            // Mostrar loading
+            const loadingMsg = document.createElement('div');
+            loadingMsg.innerHTML = '📧 Enviando email...';
+            loadingMsg.style.cssText = 'position:fixed;top:20px;right:20px;background:#06B6D4;color:white;padding:10px;border-radius:5px;z-index:9999;'; // Corrigido para a nova paleta
+            document.body.appendChild(loadingMsg);
+            
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+                .then(function(response) {
+                    console.log('✅ EMAIL ENVIADO COM SUCESSO!');
+                    loadingMsg.remove();
+                    const successMsg = document.createElement('div');
+                    successMsg.innerHTML = '✅ Email enviado!';
+                    successMsg.style.cssText = 'position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:10px;border-radius:5px;z-index:9999;';
+                    document.body.appendChild(successMsg);
+                    setTimeout(() => successMsg.remove(), 3000);
+                    
+                }, function(error) {
+                    console.log('❌ ERRO AO ENVIAR EMAIL:', error);
+                    loadingMsg.remove();
+                    
+                    let errorMessage = '❌ Erro ao enviar email de confirmação. A reserva foi salva, mas a confirmação pode ter falhado. Verifique o console para detalhes.';
+                    alert(errorMessage);
+                });
+        }
+
+        function sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment) {
+            // ... (função sendOwnerNotification mantida) ...
+            const equipmentList = selectedEquipment.length > 0 ? 
+                `Equipamentos/Materiais Solicitados:\n${selectedEquipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
+            
+            // CONFIGURAÇÕES DO EMAILJS (mesmas do cliente)
+            const SERVICE_ID = 'service_g1yi8ap';
+            const TEMPLATE_ID = 'template_xiqxxfh';
+            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
+            
+            // 🔧 SUBSTITUA PELO SEU EMAIL DE PROPRIETÁRIO:
+            const OWNER_EMAIL = 'proprietario@galeriacoworking.com'; // ← COLOQUE SEU EMAIL AQUI
+            
+            const ownerTemplateParams = {
+                user_email: OWNER_EMAIL,
+                user_name: 'Proprietário Galeria Coworking',
+                reply_to: clientEmail,
+                to_name: 'Proprietário',
+                from_name: 'Sistema Galeria Coworking',
+                subject: '🔔 NOVA RESERVA CONFIRMADA - Galeria Coworking',
+                message: `🦷 NOVA RESERVA NO COWORKING!
+
+🔔 NOTIFICAÇÃO DE RESERVA CONFIRMADA
+
+👨‍⚕️ DADOS DO PROFISSIONAL:
+• Nome: ${clientName}
+• CRO: ${clientCRO}
+• Telefone: ${clientPhone}
+• Email: ${clientEmail}
+
+📅 DETALHES DA RESERVA:
+• Data: ${new Date(selectedDate).toLocaleDateString('pt-BR')}
+• Horário: ${selectedTimeText}
+• Plano: ${selectedPlan}
+• Valor Total: ${totalAmount}
+
+${equipmentList}💰 STATUS DO PAGAMENTO:
+• Método: PIX
+• Status: Confirmado pelo cliente
+• Valor: ${totalAmount}
+
+📋 AÇÕES NECESSÁRIAS:
+• Preparar o espaço para o horário agendado
+• Verificar disponibilidade dos equipamentos solicitados
+• Confirmar limpeza e esterilização
+
+📞 CONTATO DO CLIENTE:
+• WhatsApp: ${clientPhone}
+• Email: ${clientEmail}
+
+⏰ Reserva realizada em: ${new Date().toLocaleString('pt-BR')}
+
+Sistema Galeria Coworking`
+            };
+            
+            // ENVIO DO EMAIL PARA O PROPRIETÁRIO
+            console.log('📧 Enviando notificação para o proprietário...');
+            
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, ownerTemplateParams, PUBLIC_KEY)
+                .then(function(response) {
+                    console.log('✅ Notificação enviada para o proprietário!');
+                }, function(error) {
+                    console.log('❌ Erro ao enviar notificação para proprietário:', error);
+                    // Não mostra erro para o cliente, apenas registra no console
+                });
+        }
+
+
+
+        // Event listeners
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedDate || !selectedPlan) {
+                alert('Por favor, selecione uma data e um plano.');
+                return;
+            }
+            
+            const total = document.getElementById('totalPrice').textContent;
+            document.getElementById('pixAmount').textContent = total;
+            
+            document.getElementById('pixModal').classList.remove('hidden');
+            document.getElementById('pixModal').classList.add('flex');
+        });
+
+        // Add event listeners for equipment checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', calculateTotal);
+        });
+
+        // Initialize EmailJS
+        emailjs.init('ckNNBdvQMD-hnrc_T');
+
+        // 🚀 INICIALIZAÇÃO FINAL: CHAMA A FUNÇÃO QUE BUSCA DADOS NO FIRESTORE E GERA O CALENDÁRIO
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchOccupiedSlots(); // Garante que o calendário aparece com os dados do Firebase
+        });
+    </script>
+    
+</head>
+<body>
     <header class="bg-textdark text-textlight shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
@@ -492,423 +1072,5 @@
         </div>
     </div>
 
-    <script>
-        // 2. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE FIRESTORE
-        // ⚠️ SUBSTITUA PELAS SUAS CHAVES REAIS DO CONSOLE DO FIREBASE
-        const firebaseConfig = {
-            apiKey: "AIzaSyCOxFGh3c4t2eoukBA_apqRe83nursanug",
-            authDomain: "mari-projeto-f5877.firebaseapp.com",
-            projectId: "mari-projeto-f5877",
-            storageBucket: "mari-projeto-f5877.firebasestorage.app",
-            messagingSenderId: "360074059778",
-            appId: "1:360074059778:web:e42b2d8b6d18cf7992071b",
-            measurementId: "G-DPNMK7E2KB"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        // db é o objeto usado para interagir com o Firestore
-        const db = firebase.firestore(app); 
-
-        let selectedDate = null;
-        let selectedPlan = null;
-        let selectedPlanPrice = 0;
-        
-        // Objeto que armazenará os slots ocupados, lidos do Firestore
-        let occupiedSlots = {}; 
-        
-        // ******************************************************
-        // 2. FUNÇÃO PARA BUSCAR DADOS REAIS DO FIREBASE E INICIALIZAR O CALENDÁRIO
-        // ******************************************************
-        async function fetchOccupiedSlots() {
-            try {
-                // Obtém todas as reservas
-                const snapshot = await db.collection("reservations").get();
-                
-                occupiedSlots = {};
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const date = data.date; 
-                    
-                    if (!occupiedSlots[date]) {
-                        occupiedSlots[date] = [];
-                    }
-                    occupiedSlots[date].push({
-                        time: data.time,
-                        client: data.clientDescription
-                    });
-                });
-                
-                console.log("Reservas do Firestore carregadas.", occupiedSlots);
-                generateCalendar(); // ✅ CHAMA O CALENDÁRIO COM DADOS ATUALIZADOS
-                
-            } catch (error) {
-                console.error("Erro ao buscar reservas do Firestore. Garantindo que o calendário apareça:", error);
-                // Se der erro no Firebase, o calendário ainda deve aparecer vazio:
-                generateCalendar(); 
-            }
-        }
-
-        // ******************************************************
-        // 3. FUNÇÃO QUE GERA E EXIBE O CALENDÁRIO
-        // ******************************************************
-        function generateCalendar() {
-            const calendar = document.getElementById('calendar');
-            const today = new Date();
-            const currentMonth = today.getMonth();
-            const currentYear = today.getFullYear();
-            
-            const firstDay = new Date(currentYear, currentMonth, 1);
-            const lastDay = new Date(currentYear, currentMonth + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startingDayOfWeek = firstDay.getDay();
-            
-            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-            
-            let calendarHTML = `
-                <div class="text-center mb-4">
-                    <h5 class="text-lg font-semibold">${monthNames[currentMonth]} ${currentYear}</h5>
-                </div>
-                <div class="grid grid-cols-7 gap-1 mb-2">
-                    <div class="text-center text-sm font-medium text-gray-500 p-2">Dom</div>
-                    <div class="text-center text-sm font-medium text-gray-500 p-2">Seg</div>
-                    <div class="text-center text-sm font-medium text-gray-500 p-2">Ter</div>
-                    <div class="text-center text-sm font-medium text-gray-500 p-2">Qua</div>
-                    <div class="text-center text-sm font-medium text-gray-500 p-2">Qui</div>
-                    <div class="text-center text-sm font-medium text-gray-500 p-2">Sex</div>
-                    <div class="text-center text-sm font-medium text-gray-500 p-2">Sáb</div>
-                </div>
-                <div class="grid grid-cols-7 gap-1">
-            `;
-            
-            // Empty cells for days before the first day of the month
-            for (let i = 0; i < startingDayOfWeek; i++) {
-                calendarHTML += '<div class="p-2"></div>';
-            }
-            
-            // Days of the month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(currentYear, currentMonth, day);
-                // Formato YYYY-MM-DD
-                const dateString = date.toISOString().split('T')[0];
-                const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-                
-                // Verifica se a data é anterior ao dia atual (ignorando hora)
-                const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate()); 
-                
-                const dayOccupied = occupiedSlots[dateString];
-                const hasOccupied = dayOccupied && dayOccupied.length > 0;
-                
-                let dayClass = 'calendar-day p-2 text-center cursor-pointer rounded-lg';
-                let tooltipContent = '';
-                
-                if (isPast) {
-                    dayClass += ' text-gray-400 cursor-not-allowed';
-                } else if (isToday) {
-                    dayClass += ' bg-primary text-textdark font-semibold';
-                } else if (hasOccupied) {
-                    dayClass += ' bg-yellow-100 text-yellow-800 tooltip';
-                    const occupiedInfo = dayOccupied.map(slot => {
-                        const client = slot.client;
-                        
-                        if (client.includes('Manhã')) {
-                            return 'Manhã (08h-12h)';
-                        } else if (client.includes('Tarde')) {
-                            return 'Tarde (13h-17h)';
-                        } else if (client.includes('Dia Completo')) {
-                            return 'Dia Completo (08h-18h)';
-                        } else {
-                            return `${slot.time}`;
-                        }
-                    });
-                    
-                    const uniqueInfo = [...new Set(occupiedInfo)];
-                    tooltipContent = `<span class="tooltiptext">Ocupado: ${uniqueInfo.join(', ')}</span>`;
-                } else {
-                    dayClass += ' hover:bg-primary hover:bg-opacity-50'; 
-                }
-                
-                calendarHTML += `<div class="${dayClass}" onclick="${!isPast ? `selectDate('${dateString}', this)` : ''}">${day}${tooltipContent}</div>`;
-            }
-            
-            calendarHTML += '</div>';
-            calendar.innerHTML = calendarHTML;
-        }
-
-        // ******************************************************
-        // 4. FUNÇÕES DE SELEÇÃO E LÓGICA DE NEGÓCIO
-        // ******************************************************
-        function selectDate(dateString, element) {
-            // Remove previous selection
-            document.querySelectorAll('.calendar-day').forEach(day => {
-                day.classList.remove('selected');
-            });
-            
-            // Add selection to clicked day
-            element.classList.add('selected');
-            selectedDate = dateString;
-            
-            // Update time slots
-            updateTimeSlots();
-        }
-
-        /**
-         * CORRIGIDO: Adicionado checagem de Plano e Data para evitar erro
-         */
-        function updateTimeSlots() {
-            const timeSlot = document.getElementById('timeSlot');
-            
-            // 🔴 VERIFICAÇÃO CRÍTICA 1: O PLANO FOI SELECIONADO?
-            if (!selectedPlan) {
-                timeSlot.innerHTML = '<option value="">Selecione um plano no topo</option>';
-                return;
-            }
-
-            // 🔴 VERIFICAÇÃO CRÍTICA 2: A DATA FOI SELECIONADA?
-            if (!selectedDate) {
-                timeSlot.innerHTML = '<option value="">Selecione a data no calendário</option>';
-                return;
-            }
-
-            // Se ambos estiverem OK, prossegue com a lógica de disponibilidade
-            const occupiedSlots_day = occupiedSlots[selectedDate] || [];
-            const occupiedTimes = occupiedSlots_day.map(slot => slot.time);
-            
-            let options = '<option value="">Selecione o horário</option>';
-            
-            if (selectedPlan === 'hora') {
-                const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-                hours.forEach(hour => {
-                    if (!occupiedTimes.includes(hour)) {
-                        options += `<option value="${hour}">${hour} (1 hora)</option>`;
-                    }
-                });
-            } else if (selectedPlan === 'turno') {
-                const morningOccupied = occupiedTimes.some(time => {
-                    const hour = parseInt(time.split(':')[0]);
-                    return hour >= 8 && hour < 12;
-                }) || occupiedSlots_day.some(slot => slot.client.includes('Dia Completo'));
-                
-                const afternoonOccupied = occupiedTimes.some(time => {
-                    const hour = parseInt(time.split(':')[0]);
-                    return hour >= 13 && hour < 17;
-                }) || occupiedSlots_day.some(slot => slot.client.includes('Dia Completo'));
-                
-                if (!morningOccupied) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
-                if (!afternoonOccupied) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
-            } else if (selectedPlan === 'dia') {
-                const dayOccupied = occupiedSlots_day.length > 0;
-                if (!dayOccupied) options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
-            }
-            
-            timeSlot.innerHTML = options;
-        }
-
-        // Chamada direta do botão de plano (funciona se 'updateTimeSlots' estiver OK)
-        function selectPlan(plan, price) {
-            selectedPlan = plan;
-            selectedPlanPrice = price;
-            
-            const planNames = {
-                'hora': 'Por Hora - R$ 70,00',
-                'turno': 'Por Turno - R$ 150,00',
-                'dia': 'Dia Completo - R$ 300,00'
-            };
-            
-            document.getElementById('selectedPlan').textContent = planNames[plan];
-            updateTimeSlots(); // Chama a lógica de horário imediatamente
-            calculateTotal();
-            
-            // Scroll to booking section
-            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function calculateTotal() {
-            let total = selectedPlanPrice;
-            let hours = 1;
-            
-            if (selectedPlan === 'turno') {
-                hours = 4; 
-            } else if (selectedPlan === 'dia') {
-                hours = 10; 
-            }
-            
-            // Add equipment costs multiplied by hours
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-            checkboxes.forEach(checkbox => {
-                switch(checkbox.value) {
-                    case 'fotopolimerizador': total += 5 * hours; break;
-                    case 'ultrassom': total += 5 * hours; break;
-                    case 'autoclave': total += 20; break;
-                    case 'laser': total += 20 * hours; break;
-                    case 'raioX': total += 50 * hours; break;
-                    case 'kitDentistica': total += 20 * hours; break;
-                    case 'kitProtese': total += 30 * hours; break;
-                    case 'kitCirurgia': total += 80; break;
-                    case 'kitClareamentoConsultorio': total += 65 * hours; break;
-                    case 'kitClareamentoCaseiro': total += 90; break;
-                }
-            });
-            
-            document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-
-        function scrollToBooking() {
-            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function copyPixKey() {
-            const pixKey = document.getElementById('pixKey').textContent;
-            navigator.clipboard.writeText(pixKey).then(() => {
-                alert('Chave PIX copiada!');
-            });
-        }
-
-        function closePixModal() {
-            document.getElementById('pixModal').classList.add('hidden');
-            document.getElementById('pixModal').classList.remove('flex');
-        }
-
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.add('hidden');
-            document.getElementById('successModal').classList.remove('flex');
-            
-            // Reset form
-            document.getElementById('bookingForm').reset();
-            selectedDate = null;
-            selectedPlan = null;
-            selectedPlanPrice = 0;
-            document.getElementById('selectedPlan').textContent = 'Selecione um plano acima';
-            document.getElementById('totalPrice').textContent = 'R$ 0,00';
-            
-            // ATUALIZA O CALENDÁRIO COM DADOS FRESCOS
-            fetchOccupiedSlots(); 
-        }
-
-        function confirmPayment() {
-            closePixModal();
-            
-            const timeSlot = document.getElementById('timeSlot').value;
-            const clientName = document.getElementById('clientName').value;
-            const clientEmail = document.getElementById('email').value;
-            const clientCRO = document.getElementById('cro').value;
-            const clientPhone = document.getElementById('phone').value;
-            const selectedTimeText = document.getElementById('timeSlot').selectedOptions[0].text;
-            const totalAmountText = document.getElementById('totalPrice').textContent;
-            const totalAmount = parseFloat(totalAmountText.replace('R$', '').replace(',', '.').trim());
-            
-            // ... (Lógica para obter equipamentos e montar clientDescription) ...
-            const selectedEquipment = [];
-            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                const equipmentNames = {
-                    'fotopolimerizador': 'Fotopolimerizador', 'ultrassom': 'Ultrassom e jato de bicarbonato',
-                    'autoclave': 'Autoclave', 'laser': 'Laser de baixa potência', 'raioX': 'Raio X portátil com sensor digital',
-                    'kitDentistica': 'Kit de dentística', 'kitProtese': 'Kit de prótese', 'kitCirurgia': 'Kit de cirurgia estéril',
-                    'kitClareamentoConsultorio': 'Kit clareamento consultório', 'kitClareamentoCaseiro': 'Kit clareamento caseiro'
-                };
-                selectedEquipment.push(equipmentNames[checkbox.value]);
-            });
-            
-            let clientDescription = '';
-            if (selectedPlan === 'hora') {
-                clientDescription = `${clientName} - Consulta`;
-            } else if (selectedPlan === 'turno') {
-                clientDescription = `${clientName} - Turno ${timeSlot === '08:00' ? 'Manhã' : 'Tarde'}`;
-            } else if (selectedPlan === 'dia') {
-                clientDescription = `${clientName} - Dia Completo`;
-            }
-            
-            // DADOS PARA SALVAR NO FIRESTORE
-            const reservationData = {
-                clientName: clientName, cro: clientCRO, phone: clientPhone, email: clientEmail,
-                date: selectedDate, time: timeSlot, clientDescription: clientDescription, 
-                plan: selectedPlan, totalAmount: totalAmount, equipment: selectedEquipment,
-                paymentStatus: 'Confirmado PIX',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            // SALVA NO FIRESTORE
-            db.collection("reservations").add(reservationData)
-                .then((docRef) => {
-                    console.log("Reserva salva com ID:", docRef.id);
-                    sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
-                    sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
-                    document.getElementById('confirmationEmail').textContent = clientEmail;
-                    document.getElementById('successModal').classList.remove('hidden');
-                    document.getElementById('successModal').classList.add('flex');
-                })
-                .catch((error) => {
-                    console.error("Erro ao salvar reserva no Firestore:", error);
-                    alert("Erro ao finalizar reserva. Tente novamente ou entre em contato. Erro: " + error.message);
-                });
-        }
-
-
-        function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
-            const equipmentList = equipment.length > 0 ? `Equipamentos/Materiais Adicionais:\n${equipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
-            const SERVICE_ID = 'service_g1yi8ap';
-            const TEMPLATE_ID = 'template_xiqxxfh';
-            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
-            
-            const templateParams = {
-                user_email: email, user_name: name, reply_to: email, to_name: name,
-                from_name: 'Galeria Coworking Odontológico', subject: '✅ Reserva Confirmada - Galeria Coworking',
-                message: `🦷 GALERIA COWORKING ODONTOLÓGICO\n\n✅ RESERVA CONFIRMADA!\n\n📋 DADOS DO PROFISSIONAL:\n• Nome: ${name}\n• CRO: ${cro}\n• Telefone: ${phone}\n• Email: ${email}\n\n📅 DETALHES DA RESERVA:\n• Data: ${new Date(date).toLocaleDateString('pt-BR')}\n• Horário: ${time}\n• Plano: ${plan}\n• Valor Total: ${total}\n\n${equipmentList}📍 ENDEREÇO:\nGaleria Coworking Odontológico\n[Seu endereço completo aqui]\n\n📞 CONTATO:\nWhatsApp: (11) 99999-9999\nEmail: contato@galeriacoworking.com\n\n⚠️ IMPORTANTE:\n• Chegue 15 minutos antes do horário\n• Traga seus materiais básicos\n• Cancelamentos até 24h antes\n\nObrigado por escolher a Galeria Coworking!`
-            };
-            
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
-                .then(function(response) { console.log('✅ EMAIL ENVIADO COM SUCESSO!'); }, function(error) { console.log('❌ ERRO AO ENVIAR EMAIL:', error); });
-        }
-
-        function sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment) {
-            const equipmentList = selectedEquipment.length > 0 ? `Equipamentos/Materiais Solicitados:\n${selectedEquipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
-            const SERVICE_ID = 'service_g1yi8ap';
-            const TEMPLATE_ID = 'template_xiqxxfh';
-            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
-            const OWNER_EMAIL = 'proprietario@galeriacoworking.com'; // ← COLOQUE SEU EMAIL AQUI
-            
-            const ownerTemplateParams = {
-                user_email: OWNER_EMAIL, user_name: 'Proprietário Galeria Coworking', reply_to: clientEmail, to_name: 'Proprietário',
-                from_name: 'Sistema Galeria Coworking', subject: '🔔 NOVA RESERVA CONFIRMADA - Galeria Coworking',
-                message: `🦷 NOVA RESERVA NO COWORKING!\n\n🔔 NOTIFICAÇÃO DE RESERVA CONFIRMADA\n\n👨‍⚕️ DADOS DO PROFISSIONAL:\n• Nome: ${clientName}\n• CRO: ${clientCRO}\n• Telefone: ${clientPhone}\n• Email: ${clientEmail}\n\n📅 DETALHES DA RESERVA:\n• Data: ${new Date(selectedDate).toLocaleDateString('pt-BR')}\n• Horário: ${selectedTimeText}\n• Plano: ${selectedPlan}\n• Valor Total: ${totalAmount}\n\n${equipmentList}💰 STATUS DO PAGAMENTO:\n• Método: PIX\n• Status: Confirmado pelo cliente\n• Valor: ${totalAmount}\n\n📋 AÇÕES NECESSÁRIAS:...\n\nSistema Galeria Coworking`
-            };
-            
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, ownerTemplateParams, PUBLIC_KEY)
-                .then(function(response) { console.log('✅ Notificação enviada para o proprietário!'); }, function(error) { console.log('❌ Erro ao enviar notificação para proprietário:', error); });
-        }
-
-        // Event listeners
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!selectedDate || !selectedPlan) {
-                alert('Por favor, selecione uma data e um plano.');
-                return;
-            }
-            
-            const total = document.getElementById('totalPrice').textContent;
-            document.getElementById('pixAmount').textContent = total;
-            
-            document.getElementById('pixModal').classList.remove('hidden');
-            document.getElementById('pixModal').classList.add('flex');
-        });
-
-        // Add event listeners for equipment checkboxes
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', calculateTotal);
-        });
-
-        // Initialize EmailJS
-        emailjs.init('ckNNBdvQMD-hnrc_T');
-
-        // ******************************************************
-        // 5. INICIALIZAÇÃO FINAL: CHAMA A FUNÇÃO QUE GERA O CALENDÁRIO COM DADOS DO FIREBASE
-        // ******************************************************
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchOccupiedSlots(); // CHAMA A FUNÇÃO QUE BUSCA OS DADOS E GERA O CALENDÁRIO
-        });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b2c32380b19ca3',t:'MTc1OTg5NjM1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b2c32380b19ca3',t:'MTc1OTg5NjM1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
