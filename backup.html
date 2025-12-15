@@ -151,347 +151,7 @@
             color: #F5F5DC; /* Bege suave */
         }
     </style>
-    <header class="bg-textdark text-textlight shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <a href="#home" class="flex items-center hover:opacity-80 transition-opacity">
-                    <img src="image.png" alt="Galeria Odontologia Integrada Logo" class="h-10 w-auto">
-                </a>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="#home" class="hover:text-accent transition-colors">Início</a>
-                    <a href="#about" class="hover:text-accent transition-colors">Sobre</a>
-                    <a href="#services" class="hover:text-accent transition-colors">Serviços</a>
-                    <a href="#contact" class="hover:text-accent transition-colors">Contato</a>
-                </nav>
-                </div>
-        </div>
-    </header>
-
-    <section id="home" class="gradient-bg text-textdark py-20 relative overflow-hidden">
-        <div class="container mx-auto px-6 text-center relative z-10">
-            <div class="flex flex-col items-center justify-center mb-6 fade-in">
-                <img src="image.png" alt="Galeria Odontologia Integrada Logo" class="mx-auto max-h-40 w-auto mb-4">
-                
-                <h2 class="text-6xl logo-principal text-textdark">galeria.</h2>
-                <p class="logo-secundaria text-textdark text-xl mt-3 opacity-80">Odontologia Integrada</p>
-            </div>
-            
-            <p class="text-xl mb-8 max-w-3xl mx-auto fade-in text-textdark">Atenda seus pacientes com flexibilidade, conforto e tecnologia de ponta. Reserve por hora, turno ou dia inteiro.</p>
-            
-            <button onclick="scrollToBooking()" class="bg-accent text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#7e5748] transition-colors shadow-lg fade-in button-effect">
-                Fazer Reserva
-            </button>
-        </div>
-    </section>
-
-    <section id="about" class="py-16 bg-secondary"> <div class="container mx-auto px-6">
-            <div class="text-center mb-12">
-                <h3 class="text-4xl font-bold text-textdark mb-4">Quem Somos?</h3>
-                <p class="text-lg text-gray-600 max-w-4xl mx-auto">
-                    A Galeria é um espaço de coworking odontológico que permite que o Cirurgião-Dentista atenda seus pacientes com flexibilidade, conforto, praticidade e muita tecnologia.
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
-                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor">
-                            <path d="M20 30 Q50 10 80 30 Q50 50 20 30 M45 25 L55 25 M50 20 L50 35"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-xl font-semibold mb-3 text-textdark">Flexibilidade</h4>
-                    <p class="text-gray-600">Reserve por hora, turno ou dia inteiro conforme sua demanda</p>
-                </div>
-                
-                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
-                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor">
-                            <rect x="20" y="40" width="60" height="30" rx="5"/>
-                            <circle cx="30" cy="35" r="8"/>
-                            <circle cx="70" cy="35" r="8"/>
-                            <path d="M25 25 L35 35 M65 35 L75 25"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-xl font-semibold mb-3 text-textdark">Tecnologia</h4>
-                    <p class="text-gray-600">Equipamentos modernos e sistema integrado inclusos</p>
-                </div>
-                
-                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
-                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor">
-                            <rect x="25" y="30" width="50" height="35" rx="5"/>
-                            <path d="M35 45 L45 50 L65 35"/>
-                            <circle cx="40" cy="20" r="8"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-xl font-semibold mb-3 text-textdark">Praticidade</h4>
-                    <p class="text-gray-600">Agendamento online com pagamento antecipado via PIX</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="services" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <h3 class="text-4xl font-bold text-center text-textdark mb-12">Valores e Serviços</h3>
-            
-            <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <div class="bg-white rounded-xl shadow-lg p-8 card-hover relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 opacity-10">
-                        <svg viewBox="0 0 100 100" fill="currentColor" class="text-primary">
-                            <circle cx="50" cy="50" r="40"/>
-                            <path d="M30 40 Q50 20 70 40 Q50 60 30 40" fill="white"/>
-                        </svg>
-                    </div>
-                    <div class="relative z-10">
-                        <h4 class="text-2xl font-bold text-accent mb-4">Por Hora</h4>
-                        <div class="text-4xl font-bold text-textdark mb-4">R$ 70<span class="text-lg text-gray-500">/hora</span></div>
-                        <p class="text-gray-600 mb-6">Ideal para consultas rápidas e procedimentos simples</p>
-                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
-                            Selecionar
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-8 card-hover border-2 border-accent relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 opacity-10">
-                        <svg viewBox="0 0 100 100" fill="currentColor" class="text-primary">
-                            <rect x="20" y="30" width="60" height="40" rx="5"/>
-                            <circle cx="35" cy="20" r="8"/>
-                            <circle cx="65" cy="20" r="8"/>
-                        </svg>
-                    </div>
-                    <div class="relative z-10">
-                        <div class="bg-accent text-white px-3 py-1 rounded-full text-sm inline-block mb-4">Mais Popular</div>
-                        <h4 class="text-2xl font-bold text-accent mb-4">Por Turno</h4>
-                        <div class="text-4xl font-bold text-textdark mb-4">R$ 150<span class="text-lg text-gray-500">/turno</span></div>
-                        <p class="text-gray-600 mb-6">Manhã: 08h às 12h | Tarde: 13h às 17h</p>
-                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
-                            Selecionar
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-8 card-hover relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 opacity-10">
-                        <svg viewBox="0 0 100 100" fill="currentColor" class="text-primary">
-                            <path d="M20 60 Q50 40 80 60 L80 80 L20 80 Z"/>
-                            <circle cx="30" cy="30" r="8"/>
-                            <circle cx="50" cy="25" r="8"/>
-                            <circle cx="70" cy="30" r="8"/>
-                        </svg>
-                    </div>
-                    <div class="relative z-10">
-                        <h4 class="text-2xl font-bold text-accent mb-4">Dia Completo</h4>
-                        <div class="text-4xl font-bold text-textdark mb-4">R$ 300<span class="text-lg text-gray-500">/dia</span></div>
-                        <p class="text-gray-600 mb-6">8h às 18h - Para dias intensivos de atendimento</p>
-                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
-                            Selecionar
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white rounded-xl shadow-lg p-8">
-                    <h4 class="text-2xl font-bold text-textdark mb-6">Equipamentos Adicionais</h4>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Fotopolimerizador</span>
-                            <span class="font-semibold text-accent">R$ 5,00/h</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Ultrassom e jato de bicarbonato</span>
-                            <span class="font-semibold text-accent">R$ 5,00/h</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Autoclave</span>
-                            <span class="font-semibold text-accent">R$ 20,00/ciclo</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Laser de baixa potência</span>
-                            <span class="font-semibold text-accent">R$ 20,00/h</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Raio X portátil com sensor digital</span>
-                            <span class="font-semibold text-accent">R$ 50,00/h</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Kit de dentística</span>
-                            <span class="font-semibold text-accent">R$ 20,00/h</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Kit de prótese</span>
-                            <span class="font-semibold text-accent">R$ 30,00/h</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Kit de cirurgia estéril</span>
-                            <span class="font-semibold text-accent">R$ 80,00/kit</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Kit clareamento consultório</span>
-                            <span class="font-semibold text-accent">R$ 65,00/h</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
-                            <span>Kit clareamento caseiro</span>
-                            <span class="font-semibold text-accent">R$ 90,00/kit</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="booking" class="py-16 bg-secondary"> <div class="container mx-auto px-6">
-            <h3 class="text-4xl font-bold text-center text-textdark mb-12">Fazer Reserva</h3>
-            
-            <div class="max-w-4xl mx-auto">
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h4 class="text-xl font-semibold mb-4 text-textdark">Selecione a Data</h4>
-                        <div id="calendar" class="bg-gray-50 rounded-lg p-4">
-                            </div>
-                    </div>
-                    
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h4 class="text-xl font-semibold mb-4 text-textdark">Detalhes da Reserva</h4>
-                        <form id="bookingForm" class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
-                                <input type="text" id="clientName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">CRO</label>
-                                <input type="text" id="cro" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
-                                <input type="tel" id="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="email" id="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent" placeholder="seu@email.com">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Plano Selecionado</label>
-                                <div id="selectedPlan" class="px-4 py-2 bg-accent text-white rounded-lg">
-                                    Selecione um plano acima
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Horário</label>
-                                <select id="timeSlot" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
-                                    <option value="">Selecione o horário</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Equipamentos e Materiais Adicionais</label>
-                                <div class="space-y-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-lg border border-gray-200">
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="fotopolimerizador" class="mr-2 text-accent focus:ring-accent"> Fotopolimerizador (R$ 5,00/h)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="ultrassom" class="mr-2 text-accent focus:ring-accent"> Ultrassom e jato (R$ 5,00/h)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="autoclave" class="mr-2 text-accent focus:ring-accent"> Autoclave (R$ 20,00/ciclo)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="laser" class="mr-2 text-accent focus:ring-accent"> Laser baixa potência (R$ 20,00/h)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="raioX" class="mr-2 text-accent focus:ring-accent"> Raio X portátil (R$ 50,00/h)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="kitDentistica" class="mr-2 text-accent focus:ring-accent"> Kit de dentística (R$ 20,00/h)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="kitProtese" class="mr-2 text-accent focus:ring-accent"> Kit de prótese (R$ 30,00/h)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="kitCirurgia" class="mr-2 text-accent focus:ring-accent"> Kit de cirurgia estéril (R$ 80,00/kit)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="kitClareamentoConsultorio" class="mr-2 text-accent focus:ring-accent"> Kit clareamento consultório (R$ 65,00/h)
-                                    </label>
-                                    <label class="flex items-center text-sm">
-                                        <input type="checkbox" value="kitClareamentoCaseiro" class="mr-2 text-accent focus:ring-accent"> Kit clareamento caseiro (R$ 90,00/kit)
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="border-t pt-4">
-                                <div class="flex justify-between items-center mb-4">
-                                    <span class="font-semibold text-textdark">Total:</span>
-                                    <span id="totalPrice" class="text-2xl font-bold text-accent">R$ 0,00</span>
-                                </div>
-                                
-                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors font-semibold button-effect">
-                                    Pagar com PIX
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div id="pixModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold text-center mb-6 text-textdark">Pagamento PIX</h3>
-            
-            <div class="text-center mb-6">
-                <div class="w-48 h-48 bg-gray-200 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                    <div class="text-6xl">📱</div>
-                </div>
-                <p class="text-gray-600 mb-2">Escaneie o QR Code com seu app do banco</p>
-                <p class="text-sm text-gray-500">Ou copie a chave PIX abaixo:</p>
-            </div>
-            
-            <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
-                <p class="text-xs text-textdark mb-2">Chave PIX:</p>
-                <p id="pixKey" class="font-mono text-sm break-all text-textdark">galeria.coworking@exemplo.com</p>
-                <button onclick="copyPixKey()" class="mt-2 text-accent text-sm hover:underline">Copiar chave</button>
-            </div>
-            
-            <div class="text-center mb-6">
-                <p class="text-lg font-semibold text-textdark">Valor: <span id="pixAmount" class="text-accent">R$ 0,00</span></p>
-            </div>
-            
-            <div class="flex space-x-4">
-                <button onclick="closePixModal()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
-                    Cancelar
-                </button>
-                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
-                    Confirmar Pagamento
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center">
-            <div class="text-6xl mb-4 text-accent">✅</div>
-            <h3 class="text-2xl font-bold text-accent mb-4">Reserva Confirmada!</h3>
-            <p class="text-gray-600 mb-4">Sua reserva foi realizada com sucesso!</p>
-            <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
-                <p class="text-sm text-textdark mb-2">📧 <strong>Confirmação enviada para:</strong></p>
-                <p id="confirmationEmail" class="text-textdark font-semibold"></p>
-                <p class="text-xs text-gray-600 mt-2">Verifique sua caixa de entrada e spam</p>
-            </div>
-            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
-                Fechar
-            </button>
-        </div>
-    </div>
-
+    
     <script>
         // 2. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE FIRESTORE
         // ⚠️ SUBSTITUA PELAS SUAS CHAVES REAIS DO CONSOLE DO FIREBASE
@@ -1068,5 +728,349 @@ Sistema Galeria Coworking`
             fetchOccupiedSlots(); // Garante que o calendário aparece com os dados do Firebase
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b2c32380b19ca3',t:'MTc1OTg5NjM1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    
+</head>
+<body>
+    <header class="bg-textdark text-textlight shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#home" class="flex items-center hover:opacity-80 transition-opacity">
+                    <img src="image.png" alt="Galeria Odontologia Integrada Logo" class="h-10 w-auto">
+                </a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#home" class="hover:text-accent transition-colors">Início</a>
+                    <a href="#about" class="hover:text-accent transition-colors">Sobre</a>
+                    <a href="#services" class="hover:text-accent transition-colors">Serviços</a>
+                    <a href="#contact" class="hover:text-accent transition-colors">Contato</a>
+                </nav>
+                </div>
+        </div>
+    </header>
+
+    <section id="home" class="gradient-bg text-textdark py-20 relative overflow-hidden">
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="flex flex-col items-center justify-center mb-6 fade-in">
+                <img src="image.png" alt="Galeria Odontologia Integrada Logo" class="mx-auto max-h-40 w-auto mb-4">
+                
+                <h2 class="text-6xl logo-principal text-textdark">galeria.</h2>
+                <p class="logo-secundaria text-textdark text-xl mt-3 opacity-80">Odontologia Integrada</p>
+            </div>
+            
+            <p class="text-xl mb-8 max-w-3xl mx-auto fade-in text-textdark">Atenda seus pacientes com flexibilidade, conforto e tecnologia de ponta. Reserve por hora, turno ou dia inteiro.</p>
+            
+            <button onclick="scrollToBooking()" class="bg-accent text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#7e5748] transition-colors shadow-lg fade-in button-effect">
+                Fazer Reserva
+            </button>
+        </div>
+    </section>
+
+    <section id="about" class="py-16 bg-secondary"> <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold text-textdark mb-4">Quem Somos?</h3>
+                <p class="text-lg text-gray-600 max-w-4xl mx-auto">
+                    A Galeria é um espaço de coworking odontológico que permite que o Cirurgião-Dentista atenda seus pacientes com flexibilidade, conforto, praticidade e muita tecnologia.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
+                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor">
+                            <path d="M20 30 Q50 10 80 30 Q50 50 20 30 M45 25 L55 25 M50 20 L50 35"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3 text-textdark">Flexibilidade</h4>
+                    <p class="text-gray-600">Reserve por hora, turno ou dia inteiro conforme sua demanda</p>
+                </div>
+                
+                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
+                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor">
+                            <rect x="20" y="40" width="60" height="30" rx="5"/>
+                            <circle cx="30" cy="35" r="8"/>
+                            <circle cx="70" cy="35" r="8"/>
+                            <path d="M25 25 L35 35 M65 35 L75 25"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3 text-textdark">Tecnologia</h4>
+                    <p class="text-gray-600">Equipamentos modernos e sistema integrado inclusos</p>
+                </div>
+                
+                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
+                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor">
+                            <rect x="25" y="30" width="50" height="35" rx="5"/>
+                            <path d="M35 45 L45 50 L65 35"/>
+                            <circle cx="40" cy="20" r="8"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3 text-textdark">Praticidade</h4>
+                    <p class="text-gray-600">Agendamento online com pagamento antecipado via PIX</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h3 class="text-4xl font-bold text-center text-textdark mb-12">Valores e Serviços</h3>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white rounded-xl shadow-lg p-8 card-hover relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 opacity-10">
+                        <svg viewBox="0 0 100 100" fill="currentColor" class="text-primary">
+                            <circle cx="50" cy="50" r="40"/>
+                            <path d="M30 40 Q50 20 70 40 Q50 60 30 40" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold text-accent mb-4">Por Hora</h4>
+                        <div class="text-4xl font-bold text-textdark mb-4">R$ 70<span class="text-lg text-gray-500">/hora</span></div>
+                        <p class="text-gray-600 mb-6">Ideal para consultas rápidas e procedimentos simples</p>
+                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                            Selecionar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 card-hover border-2 border-accent relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 opacity-10">
+                        <svg viewBox="0 0 100 100" fill="currentColor" class="text-primary">
+                            <rect x="20" y="30" width="60" height="40" rx="5"/>
+                            <circle cx="35" cy="20" r="8"/>
+                            <circle cx="65" cy="20" r="8"/>
+                        </svg>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="bg-accent text-white px-3 py-1 rounded-full text-sm inline-block mb-4">Mais Popular</div>
+                        <h4 class="text-2xl font-bold text-accent mb-4">Por Turno</h4>
+                        <div class="text-4xl font-bold text-textdark mb-4">R$ 150<span class="text-lg text-gray-500">/turno</span></div>
+                        <p class="text-gray-600 mb-6">Manhã: 08h às 12h | Tarde: 13h às 17h</p>
+                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                            Selecionar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 card-hover relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 opacity-10">
+                        <svg viewBox="0 0 100 100" fill="currentColor" class="text-primary">
+                            <path d="M20 60 Q50 40 80 60 L80 80 L20 80 Z"/>
+                            <circle cx="30" cy="30" r="8"/>
+                            <circle cx="50" cy="25" r="8"/>
+                            <circle cx="70" cy="30" r="8"/>
+                        </svg>
+                    </div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold text-accent mb-4">Dia Completo</h4>
+                        <div class="text-4xl font-bold text-textdark mb-4">R$ 300<span class="text-lg text-gray-500">/dia</span></div>
+                        <p class="text-gray-600 mb-6">8h às 18h - Para dias intensivos de atendimento</p>
+                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                            Selecionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h4 class="text-2xl font-bold text-textdark mb-6">Equipamentos Adicionais</h4>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Fotopolimerizador</span>
+                            <span class="font-semibold text-accent">R$ 5,00/h</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Ultrassom e jato de bicarbonato</span>
+                            <span class="font-semibold text-accent">R$ 5,00/h</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Autoclave</span>
+                            <span class="font-semibold text-accent">R$ 20,00/ciclo</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Laser de baixa potência</span>
+                            <span class="font-semibold text-accent">R$ 20,00/h</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Raio X portátil com sensor digital</span>
+                            <span class="font-semibold text-accent">R$ 50,00/h</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Kit de dentística</span>
+                            <span class="font-semibold text-accent">R$ 20,00/h</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Kit de prótese</span>
+                            <span class="font-semibold text-accent">R$ 30,00/h</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Kit de cirurgia estéril</span>
+                            <span class="font-semibold text-accent">R$ 80,00/kit</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Kit clareamento consultório</span>
+                            <span class="font-semibold text-accent">R$ 65,00/h</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg">
+                            <span>Kit clareamento caseiro</span>
+                            <span class="font-semibold text-accent">R$ 90,00/kit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="py-16 bg-secondary"> <div class="container mx-auto px-6">
+            <h3 class="text-4xl font-bold text-center text-textdark mb-12">Fazer Reserva</h3>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h4 class="text-xl font-semibold mb-4 text-textdark">Selecione a Data</h4>
+                        <div id="calendar" class="bg-gray-50 rounded-lg p-4">
+                            </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h4 class="text-xl font-semibold mb-4 text-textdark">Detalhes da Reserva</h4>
+                        <form id="bookingForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                                <input type="text" id="clientName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CRO</label>
+                                <input type="text" id="cro" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                                <input type="tel" id="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent" placeholder="seu@email.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Plano Selecionado</label>
+                                <div id="selectedPlan" class="px-4 py-2 bg-accent text-white rounded-lg">
+                                    Selecione um plano acima
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Horário</label>
+                                <select id="timeSlot" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                                    <option value="">Selecione o horário</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Equipamentos e Materiais Adicionais</label>
+                                <div class="space-y-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-lg border border-gray-200">
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="fotopolimerizador" class="mr-2 text-accent focus:ring-accent"> Fotopolimerizador (R$ 5,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="ultrassom" class="mr-2 text-accent focus:ring-accent"> Ultrassom e jato (R$ 5,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="autoclave" class="mr-2 text-accent focus:ring-accent"> Autoclave (R$ 20,00/ciclo)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="laser" class="mr-2 text-accent focus:ring-accent"> Laser baixa potência (R$ 20,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="raioX" class="mr-2 text-accent focus:ring-accent"> Raio X portátil (R$ 50,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitDentistica" class="mr-2 text-accent focus:ring-accent"> Kit de dentística (R$ 20,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitProtese" class="mr-2 text-accent focus:ring-accent"> Kit de prótese (R$ 30,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitCirurgia" class="mr-2 text-accent focus:ring-accent"> Kit de cirurgia estéril (R$ 80,00/kit)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitClareamentoConsultorio" class="mr-2 text-accent focus:ring-accent"> Kit clareamento consultório (R$ 65,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitClareamentoCaseiro" class="mr-2 text-accent focus:ring-accent"> Kit clareamento caseiro (R$ 90,00/kit)
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t pt-4">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="font-semibold text-textdark">Total:</span>
+                                    <span id="totalPrice" class="text-2xl font-bold text-accent">R$ 0,00</span>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors font-semibold button-effect">
+                                    Pagar com PIX
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="pixModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold text-center mb-6 text-textdark">Pagamento PIX</h3>
+            
+            <div class="text-center mb-6">
+                <div class="w-48 h-48 bg-gray-200 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <div class="text-6xl">📱</div>
+                </div>
+                <p class="text-gray-600 mb-2">Escaneie o QR Code com seu app do banco</p>
+                <p class="text-sm text-gray-500">Ou copie a chave PIX abaixo:</p>
+            </div>
+            
+            <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
+                <p class="text-xs text-textdark mb-2">Chave PIX:</p>
+                <p id="pixKey" class="font-mono text-sm break-all text-textdark">galeria.coworking@exemplo.com</p>
+                <button onclick="copyPixKey()" class="mt-2 text-accent text-sm hover:underline">Copiar chave</button>
+            </div>
+            
+            <div class="text-center mb-6">
+                <p class="text-lg font-semibold text-textdark">Valor: <span id="pixAmount" class="text-accent">R$ 0,00</span></p>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button onclick="closePixModal()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                    Confirmar Pagamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center">
+            <div class="text-6xl mb-4 text-accent">✅</div>
+            <h3 class="text-2xl font-bold text-accent mb-4">Reserva Confirmada!</h3>
+            <p class="text-gray-600 mb-4">Sua reserva foi realizada com sucesso!</p>
+            <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
+                <p class="text-sm text-textdark mb-2">📧 <strong>Confirmação enviada para:</strong></p>
+                <p id="confirmationEmail" class="text-textdark font-semibold"></p>
+                <p class="text-xs text-gray-600 mt-2">Verifique sua caixa de entrada e spam</p>
+            </div>
+            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b2c32380b19ca3',t:'MTc1OTg5NjM1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
