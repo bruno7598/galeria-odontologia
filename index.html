@@ -16,37 +16,140 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#FBF8E9', 
-                        secondary: '#FBF8E9', 
-                        accent: '#996E5C', 
-                        textdark: '#89878C', 
-                        textlight: '#FBF8E9' 
+                        primary: '#FBF8E9', // Bege Claro (Fundo Principal)
+                        secondary: '#FBF8E9', // Bege Claro (Fundo de Seções)
+                        accent: '#996E5C', // Cobre/Marrom (Destaque, Botões, Destaque de Texto)
+                        textdark: '#89878C', // Cinza Chumbo (Texto Principal)
+                        textlight: '#FBF8E9' // Bege Claro (Texto em fundo escuro)
                     }
                 }
             }
         }
     </script>
     <style>
-        body { box-sizing: border-box; color: #89878C; }
-        .logo-principal { font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; font-weight: 700; text-transform: lowercase; }
-        .logo-secundaria { font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
-        .gradient-bg { background: linear-gradient(135deg, #FBF8E9 0%, #EFEBE0 100%); }
-        .card-hover, .button-effect { transition: all 0.4s ease; position: relative; overflow: hidden; }
-        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 0 10px rgba(182, 224, 198, 0.5); }
-        .calendar-day { transition: all 0.2s ease; }
-        .calendar-day:hover { background-color: #e0f2fe; }
-        .occupied { background-color: #fecaca !important; color: #991b1b; }
-        .selected { background-color: #06B6D4 !important; color: white; font-weight: bold; }
-        .tooltip { position: relative; }
-        .tooltip .tooltiptext { visibility: hidden; width: 200px; background-color: #3C403B; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1000; bottom: 125%; left: 50%; margin-left: -100px; opacity: 0; transition: opacity 0.3s; font-size: 12px; }
-        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
-        .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #3C403B transparent transparent transparent; }
+        body {
+            box-sizing: border-box;
+            color: #89878C; /* Cinza Chumbo */
+        }
+        
+        .logo-principal {
+            font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+            font-weight: 700;
+            text-transform: lowercase; 
+        }
+        .logo-secundaria {
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #FBF8E9 0%, #EFEBE0 100%); 
+        }
+        
+        .card-hover, .button-effect {
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 0 10px rgba(182, 224, 198, 0.5);
+        }
+
+        .button-effect:hover::before {
+            transform: scale(3.5);
+            opacity: 0;
+        }
+
+        .button-effect::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            pointer-events: none;
+        }
+        
+        .calendar-day {
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day:hover {
+            background-color: #e0f2fe;
+        }
+        
+        .occupied {
+            background-color: #fecaca !important;
+            color: #991b1b;
+        }
+        
+        .selected {
+            background-color: #996E5C !important; /* Cor accent */
+            color: white;
+            font-weight: bold;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #3C403B;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #3C403B transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
     
     <script>
-        // 1. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE
+        // 2. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE FIRESTORE
+        // ⚠️ SUBSTITUA PELAS SUAS CHAVES REAIS DO CONSOLE DO FIREBASE
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY_AQUI", // <--- TROQUE ESTE VALOR PELO SEU REAL
+            apiKey: "AIzaSyCOxFGh3c4t2eoukBA_apqRe83nursanug", // ⚠️ CHAVE DEVE SER SUBSTITUÍDA
             authDomain: "mari-projeto-f5877.firebaseapp.com",
             projectId: "mari-projeto-f5877",
             storageBucket: "mari-projeto-f5877.firebasestorage.app",
@@ -55,6 +158,7 @@
             measurementId: "G-DPNMK7E2KB"
         };
 
+        // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(app);
 
@@ -62,35 +166,37 @@
         let selectedPlan = null;
         let selectedPlanPrice = 0;
         let occupiedSlots = {}; 
-        let calendarLoaded = false;
         
-        // 2. BUSCA DADOS DO FIREBASE
+        /**
+         * 3. FUNÇÃO PARA BUSCAR DADOS REAIS DO FIREBASE
+         */
         async function fetchOccupiedSlots() {
             try {
-                const snapshot = await db.collection("reservations").get(); 
+                const snapshot = await db.collection("reservations").get();
                 
                 occupiedSlots = {};
+                
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const date = data.date; 
-                    if (!occupiedSlots[date]) occupiedSlots[date] = [];
+                    
+                    if (!occupiedSlots[date]) {
+                        occupiedSlots[date] = [];
+                    }
                     occupiedSlots[date].push({
                         time: data.time,
-                        client: data.clientDescription || "Ocupado"
+                        client: data.clientDescription
                     });
                 });
                 
                 generateCalendar(); 
-                calendarLoaded = true;
                 
             } catch (error) {
-                console.error("ERRO FIREBASE. Verifique API Key e Regras.", error);
+                console.error("Erro ao buscar reservas do Firestore. Verifique API Key e Regras.", error);
                 generateCalendar(); 
-                calendarLoaded = true;
             }
         }
 
-        // 3. FUNÇÃO DE GERAÇÃO DO CALENDÁRIO
         function generateCalendar() {
             const calendar = document.getElementById('calendar');
             const today = new Date();
@@ -99,7 +205,7 @@
             
             const firstDay = new Date(currentYear, currentMonth, 1);
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const startingDayOfWeek = firstDay.getDay(); 
+            const startingDayOfWeek = firstDay.getDay();
             
             const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
                 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -143,11 +249,13 @@
                 } else if (hasOccupied) {
                     dayClass += ' bg-yellow-100 text-yellow-800 tooltip';
                     const occupiedInfo = dayOccupied.map(slot => {
-                        if (slot.client.includes('Manhã')) return 'Manhã (08h-12h)';
-                        if (slot.client.includes('Tarde')) return 'Tarde (13h-17h)';
-                        if (slot.client.includes('Dia Completo')) return 'Dia Completo';
-                        return `${slot.time}`;
+                        const client = slot.client;
+                        if (client.includes('Manhã')) return 'Manhã (08h-12h)';
+                        if (client.includes('Tarde')) return 'Tarde (13h-17h)';
+                        if (client.includes('Dia Completo')) return 'Dia Completo';
+                        return `${slot.time}`; // Para reservas por hora
                     });
+                    
                     const uniqueInfo = [...new Set(occupiedInfo)];
                     tooltipContent = `<span class="tooltiptext">Ocupado: ${uniqueInfo.join(', ')}</span>`;
                 } else {
@@ -168,7 +276,53 @@
             updateTimeSlots();
         }
 
-        // 4. SELEÇÃO DE PLANO E ATUALIZAÇÃO DE HORÁRIOS
+        /**
+         * 4. FUNÇÃO updateTimeSlots() CORRIGIDA
+         * Adicionado checagem de Plano e Data.
+         */
+        function updateTimeSlots() {
+            const timeSlot = document.getElementById('timeSlot');
+            
+            if (!selectedPlan) {
+                timeSlot.innerHTML = '<option value="">Selecione um plano no topo</option>';
+                return;
+            }
+
+            if (!selectedDate) {
+                timeSlot.innerHTML = '<option value="">Selecione a data no calendário</option>';
+                return;
+            }
+
+            const occupiedSlots_day = occupiedSlots[selectedDate] || [];
+            const occupiedTimes = occupiedSlots_day.map(slot => slot.time);
+            
+            let options = '<option value="">Selecione o horário</option>';
+            
+            if (selectedPlan === 'hora') {
+                const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+                hours.forEach(hour => {
+                    if (!occupiedTimes.includes(hour)) {
+                        options += `<option value="${hour}">${hour} (1 hora)</option>`;
+                    }
+                });
+            } else if (selectedPlan === 'turno') {
+                // Checa se o turno da manhã está ocupado por alguma reserva no período OU por dia completo
+                const morningOccupied = occupiedSlots_day.some(slot => slot.client.includes('Turno Manhã') || slot.client.includes('Dia Completo') || (parseInt(slot.time.split(':')[0]) >= 8 && parseInt(slot.time.split(':')[0]) < 12));
+                
+                // Checa se o turno da tarde está ocupado
+                const afternoonOccupied = occupiedSlots_day.some(slot => slot.client.includes('Turno Tarde') || slot.client.includes('Dia Completo') || (parseInt(slot.time.split(':')[0]) >= 13 && parseInt(slot.time.split(':')[0]) < 17));
+                
+                if (!morningOccupied) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
+                if (!afternoonOccupied) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
+            } else if (selectedPlan === 'dia') {
+                // Checa se há qualquer reserva no dia
+                const dayOccupied = occupiedSlots_day.length > 0;
+                if (!dayOccupied) options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
+            }
+            
+            timeSlot.innerHTML = options;
+        }
+
         function selectPlan(plan, price) {
             selectedPlan = plan;
             selectedPlanPrice = price;
@@ -180,59 +334,24 @@
             };
             
             document.getElementById('selectedPlan').textContent = planNames[plan];
-            calculateTotal(); 
             updateTimeSlots(); 
+            calculateTotal();
             
             document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function updateTimeSlots() {
-            const timeSlot = document.getElementById('timeSlot');
-            
-            if (!selectedPlan) {
-                timeSlot.innerHTML = '<option value="">Selecione um plano no topo</option>';
-                return;
-            }
-            if (!selectedDate) {
-                timeSlot.innerHTML = '<option value="">Selecione a data no calendário</option>';
-                return;
-            }
-
-            const occupiedSlots_day = occupiedSlots[selectedDate] || [];
-            
-            let options = '<option value="">Selecione o horário</option>';
-            
-            if (selectedPlan === 'hora') {
-                const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-                hours.forEach(hour => {
-                    if (!occupiedSlots_day.some(slot => slot.time === hour)) {
-                        options += `<option value="${hour}">${hour} (1 hora)</option>`;
-                    }
-                });
-            } else if (selectedPlan === 'turno') {
-                const morningOccupied = occupiedSlots_day.some(slot => slot.client.includes('Manhã') || slot.client.includes('Dia Completo'));
-                const afternoonOccupied = occupiedSlots_day.some(slot => slot.client.includes('Tarde') || slot.client.includes('Dia Completo'));
-                
-                if (!morningOccupied) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
-                if (!afternoonOccupied) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
-            } else if (selectedPlan === 'dia') {
-                const dayOccupied = occupiedSlots_day.length > 0;
-                if (!dayOccupied) options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
-            }
-            
-            timeSlot.innerHTML = options;
-        }
-
-        // 5. CÁLCULO DO TOTAL (Soma do plano + equipamentos)
         function calculateTotal() {
             let total = selectedPlanPrice;
+            let hours = 1;
             
-            // Define o multiplicador de horas com base no plano selecionado
-            let hours = selectedPlan === 'hora' ? 1 : (selectedPlan === 'turno' ? 4 : (selectedPlan === 'dia' ? 10 : 0));
+            if (selectedPlan === 'turno') {
+                hours = 4;
+            } else if (selectedPlan === 'dia') {
+                hours = 10;
+            }
             
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                // Lógica de soma: Multiplica por 'hours' ou usa preço fixo
-                switch(checkbox.value) { 
+                switch(checkbox.value) {
                     case 'fotopolimerizador': total += 5 * hours; break;
                     case 'ultrassom': total += 5 * hours; break;
                     case 'autoclave': total += 20; break; 
@@ -248,8 +367,40 @@
             
             document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
-        
-        // 6. FLUXO DE PAGAMENTO E CONFIRMAÇÃO DE AGENDAMENTO
+
+        function scrollToBooking() {
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyPixKey() {
+            const pixKey = document.getElementById('pixKey').textContent;
+            navigator.clipboard.writeText(pixKey).then(() => {
+                alert('Chave PIX copiada!');
+            });
+        }
+
+        function closePixModal() {
+            document.getElementById('pixModal').classList.add('hidden');
+            document.getElementById('pixModal').classList.remove('flex');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
+            
+            document.getElementById('bookingForm').reset();
+            selectedDate = null;
+            selectedPlan = null;
+            selectedPlanPrice = 0;
+            document.getElementById('selectedPlan').textContent = 'Selecione um plano acima';
+            document.getElementById('totalPrice').textContent = 'R$ 0,00';
+            
+            fetchOccupiedSlots(); 
+        }
+
+        /**
+         * 6. FUNÇÃO confirmPayment() PARA SALVAR NO FIRESTORE
+         */
         function confirmPayment() {
             closePixModal();
             
@@ -263,36 +414,37 @@
             const totalAmount = parseFloat(totalAmountText.replace('R$', '').replace(',', '.').trim());
             
             const selectedEquipment = [];
-            // Lógica para obter os nomes dos equipamentos selecionados
-            const equipmentNames = {
-                'fotopolimerizador': 'Fotopolimerizador',
-                'ultrassom': 'Ultrassom e jato de bicarbonato',
-                'autoclave': 'Autoclave',
-                'laser': 'Laser de baixa potência',
-                'raioX': 'Raio X portátil com sensor digital',
-                'kitDentistica': 'Kit de dentística',
-                'kitProtese': 'Kit de prótese',
-                'kitCirurgia': 'Kit de cirurgia estéril',
-                'kitClareamentoConsultorio': 'Kit clareamento consultório',
-                'kitClareamentoCaseiro': 'Kit clareamento caseiro'
-            };
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                selectedEquipment.push(equipmentNames[checkbox.value] || checkbox.value);
+                const equipmentNames = {
+                    'fotopolimerizador': 'Fotopolimerizador',
+                    'ultrassom': 'Ultrassom e jato de bicarbonato',
+                    'autoclave': 'Autoclave',
+                    'laser': 'Laser de baixa potência',
+                    'raioX': 'Raio X portátil com sensor digital',
+                    'kitDentistica': 'Kit de dentística',
+                    'kitProtese': 'Kit de prótese',
+                    'kitCirurgia': 'Kit de cirurgia estéril',
+                    'kitClareamentoConsultorio': 'Kit clareamento consultório',
+                    'kitClareamentoCaseiro': 'Kit clareamento caseiro'
+                };
+                selectedEquipment.push(equipmentNames[checkbox.value]);
             });
             
-            // Definição da descrição da reserva para o calendário (bloqueio de slots)
-            let clientDescription = selectedPlan; 
-            if (selectedPlan === 'hora') clientDescription = `${clientName} - ${selectedTimeText}`;
-            if (selectedPlan === 'turno') clientDescription = `${clientName} - ${selectedTimeText.includes('Manhã') ? 'Turno Manhã' : 'Turno Tarde'}`;
-            if (selectedPlan === 'dia') clientDescription = `${clientName} - Dia Completo`;
+            let clientDescription = '';
+            if (selectedPlan === 'hora') {
+                clientDescription = `${clientName} - ${selectedTimeText} (Hora)`;
+            } else if (selectedPlan === 'turno') {
+                clientDescription = `${clientName} - ${selectedTimeText.includes('Manhã') ? 'Turno Manhã' : 'Turno Tarde'}`;
+            } else if (selectedPlan === 'dia') {
+                clientDescription = `${clientName} - Dia Completo`;
+            }
             
-            // DADOS PARA SALVAR NO FIRESTORE
             const reservationData = {
                 clientName: clientName,
                 cro: clientCRO,
                 phone: clientPhone,
                 email: clientEmail,
-                date: selectedDate, // A data salva que bloqueia o dia no calendário
+                date: selectedDate,
                 time: timeSlot,
                 clientDescription: clientDescription, 
                 plan: selectedPlan,
@@ -303,10 +455,12 @@
             };
 
             // SALVA NO FIRESTORE
-            db.collection("reservations").add(reservationData) 
+            db.collection("reservations").add(reservationData)
                 .then((docRef) => {
                     console.log("Reserva salva com ID:", docRef.id);
-                    // Aqui você chamaria as funções de envio de email
+                    
+                    sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
+                    sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
                     
                     document.getElementById('confirmationEmail').textContent = clientEmail;
                     document.getElementById('successModal').classList.remove('hidden');
@@ -315,48 +469,128 @@
                 })
                 .catch((error) => {
                     console.error("Erro ao salvar reserva no Firestore:", error);
-                    alert("Erro ao finalizar reserva. Verifique suas Regras de Segurança. Erro: " + error.message);
+                    alert("Erro ao finalizar reserva. Tente novamente ou entre em contato. Erro: " + error.message);
                 });
         }
-        
-        // Funções Auxiliares (Modais e Utilidades)
-        function scrollToBooking() {
-            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-        }
-        function copyPixKey() {
-            const pixKey = document.getElementById('pixKey').textContent;
-            navigator.clipboard.writeText(pixKey).then(() => {
-                alert('Chave PIX copiada!');
-            });
-        }
-        function closePixModal() {
-            document.getElementById('pixModal').classList.add('hidden');
-            document.getElementById('pixModal').classList.remove('flex');
-        }
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.add('hidden');
-            document.getElementById('successModal').classList.remove('flex');
+
+
+        function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
+            const equipmentList = equipment.length > 0 ? 
+                `Equipamentos/Materiais Adicionais:\n${equipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
             
-            document.getElementById('bookingForm').reset();
-            selectedDate = null;
-            selectedPlan = null;
-            selectedPlanPrice = 0;
-            document.getElementById('selectedPlan').textContent = 'Selecione um plano acima';
-            document.getElementById('totalPrice').textContent = 'R$ 0,00';
+            // CONFIGURAÇÕES DO EMAILJS (Usadas no arquivo anterior)
+            const SERVICE_ID = 'service_g1yi8ap';
+            const TEMPLATE_ID = 'template_xiqxxfh';
+            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
             
-            fetchOccupiedSlots(); // Atualiza o calendário
+            const templateParams = {
+                user_email: email,
+                user_name: name,
+                reply_to: email,
+                to_name: name,
+                from_name: 'Galeria Coworking Odontológico',
+                subject: '✅ Reserva Confirmada - Galeria Coworking',
+                message: `🦷 GALERIA COWORKING ODONTOLÓGICO
+
+✅ RESERVA CONFIRMADA!
+
+📋 DADOS DO PROFISSIONAL:
+• Nome: ${name}
+• CRO: ${cro}
+• Telefone: ${phone}
+• Email: ${email}
+
+📅 DETALHES DA RESERVA:
+• Data: ${new Date(date).toLocaleDateString('pt-BR')}
+• Horário: ${time}
+• Plano: ${plan}
+• Valor Total: ${total}
+
+${equipmentList}📍 ENDEREÇO:
+Galeria Coworking Odontológico
+[Seu endereço completo aqui]
+
+📞 CONTATO:
+WhatsApp: (11) 99999-9999
+Email: contato@galeriacoworking.com
+
+⚠️ IMPORTANTE:
+• Chegue 15 minutos antes do horário
+• Traga seus materiais básicos
+• Cancelamentos até 24h antes
+
+Obrigado por escolher a Galeria Coworking!`
+            };
+            
+            console.log('📧 Enviando email de confirmação...');
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+                .then(function(response) {
+                    console.log('✅ EMAIL ENVIADO COM SUCESSO!', response);
+                }, function(error) {
+                    console.log('❌ ERRO AO ENVIAR EMAIL:', error);
+                    alert('Erro ao enviar email de confirmação. A reserva foi salva, mas a confirmação pode ter falhado. Verifique o console.');
+                });
         }
 
-        // 7. INICIALIZAÇÃO
+        function sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment) {
+            const equipmentList = selectedEquipment.length > 0 ? 
+                `Equipamentos/Materiais Solicitados:\n${selectedEquipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
+            
+            const SERVICE_ID = 'service_g1yi8ap';
+            const TEMPLATE_ID = 'template_xiqxxfh';
+            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
+            
+            // 🔧 SUBSTITUA PELO SEU EMAIL DE PROPRIETÁRIO:
+            const OWNER_EMAIL = 'proprietario@galeriacoworking.com'; // ⚠️ EMAIL DO PROPRIETÁRIO DEVE SER SUBSTITUÍDO
+            
+            const ownerTemplateParams = {
+                user_email: OWNER_EMAIL,
+                user_name: 'Proprietário Galeria Coworking',
+                reply_to: clientEmail,
+                to_name: 'Proprietário',
+                from_name: 'Sistema Galeria Coworking',
+                subject: '🔔 NOVA RESERVA CONFIRMADA - Galeria Coworking',
+                message: `🦷 NOVA RESERVA NO COWORKING!
+
+🔔 NOTIFICAÇÃO DE RESERVA CONFIRMADA
+
+👨‍⚕️ DADOS DO PROFISSIONAL:
+• Nome: ${clientName}
+• CRO: ${clientCRO}
+• Telefone: ${clientPhone}
+• Email: ${clientEmail}
+
+📅 DETALHES DA RESERVA:
+• Data: ${new Date(selectedDate).toLocaleDateString('pt-BR')}
+• Horário: ${selectedTimeText}
+• Plano: ${selectedPlan}
+• Valor Total: ${totalAmount}
+
+${equipmentList}💰 STATUS DO PAGAMENTO:
+• Método: PIX
+• Status: Confirmado pelo cliente
+• Valor: ${totalAmount}
+
+Sistema Galeria Coworking`
+            };
+            
+            console.log('📧 Enviando notificação para o proprietário...');
+            
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, ownerTemplateParams, PUBLIC_KEY)
+                .then(function(response) {
+                    console.log('✅ Notificação enviada para o proprietário!', response);
+                }, function(error) {
+                    console.log('❌ Erro ao enviar notificação para proprietário:', error);
+                });
+        }
+
+        // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             fetchOccupiedSlots(); 
             
-            // Contingência para garantir que o calendário apareça em 3 segundos
-            setTimeout(() => { if (!calendarLoaded) generateCalendar(); }, 3000);
-
-            // Listener para submissão do formulário (abre o modal PIX)
             document.getElementById('bookingForm').addEventListener('submit', function(e) {
                 e.preventDefault();
+                
                 if (!selectedDate || !selectedPlan || !document.getElementById('timeSlot').value) {
                     alert('Por favor, selecione uma data, um plano e um horário.');
                     return;
@@ -369,23 +603,85 @@
                 document.getElementById('pixModal').classList.add('flex');
             });
 
-            // LISTENERS CRÍTICOS: A CADA CLIQUE NO CHECKBOX, RECALCULA O TOTAL!
             document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', calculateTotal);
             });
+
+            emailjs.init('ckNNBdvQMD-hnrc_T');
         });
     </script>
     
 </head>
 <body>
     <header class="bg-textdark text-textlight shadow-lg sticky top-0 z-50">
-        </header>
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#home" class="flex items-center hover:opacity-80 transition-opacity">
+                    <img src="image.png" alt="Galeria Odontologia Integrada Logo" class="h-10 w-auto"> 
+                </a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#home" class="hover:text-accent transition-colors">Início</a>
+                    <a href="#about" class="hover:text-accent transition-colors">Sobre</a>
+                    <a href="#services" class="hover:text-accent transition-colors">Serviços</a>
+                    <a href="#booking" onclick="scrollToBooking()" class="bg-accent text-white px-4 py-2 rounded-lg hover:bg-cyan-600 transition-colors">Agendar</a>
+                </nav>
+            </div>
+        </div>
+    </header>
 
     <section id="home" class="gradient-bg text-textdark py-20 relative overflow-hidden">
-        </section>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="flex flex-col items-center justify-center mb-6 fade-in">
+                <img src="image.png" alt="Galeria Odontologia Integrada Logo" class="mx-auto max-h-40 w-auto mb-4">
+                
+                <h2 class="text-6xl logo-principal text-textdark">galeria.</h2>
+                <p class="logo-secundaria text-textdark text-xl mt-3 opacity-80">Odontologia Integrada</p>
+            </div>
+            
+            <p class="text-xl mb-8 max-w-3xl mx-auto fade-in text-textdark">Atenda seus pacientes com flexibilidade, conforto e tecnologia de ponta. Reserve por hora, turno ou dia inteiro.</p>
+            
+            <button onclick="scrollToBooking()" class="bg-accent text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#7e5748] transition-colors shadow-lg fade-in button-effect">
+                Fazer Reserva
+            </button>
+        </div>
+    </section>
 
     <section id="about" class="py-16 bg-secondary"> 
-        </section>
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold text-textdark mb-4">Quem Somos?</h3>
+                <p class="text-lg text-gray-600 max-w-4xl mx-auto">
+                    A Galeria é um espaço de coworking odontológico que permite que o Cirurgião-Dentista atenda seus pacientes com flexibilidade, conforto, praticidade e muita tecnologia.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
+                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor"><path d="M20 30 Q50 10 80 30 Q50 50 20 30 M45 25 L55 25 M50 20 L50 35"/></svg>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3 text-textdark">Flexibilidade</h4>
+                    <p class="text-gray-600">Reserve por hora, turno ou dia inteiro conforme sua demanda</p>
+                </div>
+                
+                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
+                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor"><rect x="20" y="40" width="60" height="30" rx="5"/><circle cx="30" cy="35" r="8"/><circle cx="70" cy="35" r="8"/><path d="M25 25 L35 35 M65 35 L75 25"/></svg>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3 text-textdark">Tecnologia</h4>
+                    <p class="text-gray-600">Equipamentos modernos e sistema integrado inclusos</p>
+                </div>
+                
+                <div class="text-center card-hover bg-white p-8 rounded-xl shadow-md">
+                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 100 100" fill="currentColor"><rect x="25" y="30" width="50" height="35" rx="5"/><path d="M35 45 L45 50 L65 35"/><circle cx="40" cy="20" r="8"/></svg>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3 text-textdark">Praticidade</h4>
+                    <p class="text-gray-600">Agendamento online com pagamento antecipado via PIX</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <section id="services" class="py-16 bg-gray-50">
         <div class="container mx-auto px-6">
@@ -397,7 +693,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Por Hora</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 70<span class="text-lg text-gray-500">/hora</span></div>
                         <p class="text-gray-600 mb-6">Ideal para consultas rápidas e procedimentos simples</p>
-                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -409,7 +705,7 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Por Turno</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 150<span class="text-lg text-gray-500">/turno</span></div>
                         <p class="text-gray-600 mb-6">Manhã: 08h às 12h | Tarde: 13h às 17h</p>
-                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
@@ -420,16 +716,16 @@
                         <h4 class="text-2xl font-bold text-accent mb-4">Dia Completo</h4>
                         <div class="text-4xl font-bold text-textdark mb-4">R$ 300<span class="text-lg text-gray-500">/dia</span></div>
                         <p class="text-gray-600 mb-6">8h às 18h - Para dias intensivos de atendimento</p>
-                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                             Selecionar
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="max-w-xl mx-auto mt-16">
                 <div class="bg-white rounded-xl shadow-lg p-8">
-                    <h4 class="text-2xl font-bold text-textdark mb-6">Equipamentos Adicionais</h4>
+                    <h4 class="text-2xl font-bold text-textdark mb-6 text-center">Tabela de Taxas Extras</h4>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Fotopolimerizador</span><span class="font-semibold text-accent">R$ 5,00/h</span></div>
                         <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Ultrassom e jato de bicarbonato</span><span class="font-semibold text-accent">R$ 5,00/h</span></div>
@@ -443,7 +739,6 @@
                         <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Kit clareamento caseiro</span><span class="font-semibold text-accent">R$ 90,00/kit</span></div>
                     </div>
                 </div>
-                <div></div>
             </div>
         </div>
     </section>
@@ -455,15 +750,16 @@
             <div class="max-w-4xl mx-auto">
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h4 class="text-xl font-semibold mb-4 text-textdark">Selecione a Data</h4>
+                        <h4 class="text-xl font-semibold mb-4 text-textdark">1. Selecione a Data</h4>
                         <div id="calendar" class="bg-gray-50 rounded-lg p-4">
                             Carregando Calendário...
                         </div>
                     </div>
                     
                     <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h4 class="text-xl font-semibold mb-4 text-textdark">Detalhes da Reserva</h4>
+                        <h4 class="text-xl font-semibold mb-4 text-textdark">2. Detalhes da Reserva</h4>
                         <form id="bookingForm" class="space-y-4">
+                            
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
                                 <input type="text" id="clientName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
@@ -501,16 +797,36 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Equipamentos e Materiais Adicionais</label>
                                 <div class="space-y-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-lg border border-gray-200">
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="fotopolimerizador" class="mr-2 text-accent focus:ring-accent"> Fotopolimerizador (R$ 5,00/h)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="ultrassom" class="mr-2 text-accent focus:ring-accent"> Ultrassom e jato (R$ 5,00/h)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="autoclave" class="mr-2 text-accent focus:ring-accent"> Autoclave (R$ 20,00/ciclo)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="laser" class="mr-2 text-accent focus:ring-accent"> Laser baixa potência (R$ 20,00/h)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="raioX" class="mr-2 text-accent focus:ring-accent"> Raio X portátil (R$ 50,00/h)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitDentistica" class="mr-2 text-accent focus:ring-accent"> Kit de dentística (R$ 20,00/h)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitProtese" class="mr-2 text-accent focus:ring-accent"> Kit de prótese (R$ 30,00/h)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitCirurgia" class="mr-2 text-accent focus:ring-accent"> Kit de cirurgia estéril (R$ 80,00/kit)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitClareamentoConsultorio" class="mr-2 text-accent focus:ring-accent"> Kit clareamento consultório (R$ 65,00/h)</label>
-                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitClareamentoCaseiro" class="mr-2 text-accent focus:ring-accent"> Kit clareamento caseiro (R$ 90,00/kit)</label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="fotopolimerizador" class="mr-2 text-accent focus:ring-accent"> Fotopolimerizador (R$ 5,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="ultrassom" class="mr-2 text-accent focus:ring-accent"> Ultrassom e jato (R$ 5,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="autoclave" class="mr-2 text-accent focus:ring-accent"> Autoclave (R$ 20,00/ciclo)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="laser" class="mr-2 text-accent focus:ring-accent"> Laser baixa potência (R$ 20,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="raioX" class="mr-2 text-accent focus:ring-accent"> Raio X portátil (R$ 50,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitDentistica" class="mr-2 text-accent focus:ring-accent"> Kit de dentística (R$ 20,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitProtese" class="mr-2 text-accent focus:ring-accent"> Kit de prótese (R$ 30,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitCirurgia" class="mr-2 text-accent focus:ring-accent"> Kit de cirurgia estéril (R$ 80,00/kit)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitClareamentoConsultorio" class="mr-2 text-accent focus:ring-accent"> Kit clareamento consultório (R$ 65,00/h)
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="checkbox" value="kitClareamentoCaseiro" class="mr-2 text-accent focus:ring-accent"> Kit clareamento caseiro (R$ 90,00/kit)
+                                    </label>
                                 </div>
                             </div>
                             
@@ -520,8 +836,8 @@
                                     <span id="totalPrice" class="text-2xl font-bold text-accent">R$ 0,00</span>
                                 </div>
                                 
-                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors font-semibold button-effect">
-                                    Pagar com PIX
+                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors font-semibold button-effect">
+                                    3. Pagar com PIX
                                 </button>
                             </div>
                         </form>
@@ -530,7 +846,7 @@
             </div>
         </div>
     </section>
-
+    
     <div id="pixModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
             <h3 class="text-2xl font-bold text-center mb-6 text-textdark">Pagamento PIX</h3>
@@ -550,14 +866,14 @@
             </div>
             
             <div class="text-center mb-6">
-                <p class="text-lg font-semibold text-textdark">Valor: <span id="pixAmount" class="text-accent">R$ 0,00</span></p>
+                <p class="text-lg font-semibold text-textdark">Valor: <span id="pixAmount" class="text-2xl font-bold text-accent">R$ 0,00</span></p>
             </div>
             
             <div class="flex space-x-4">
                 <button onclick="closePixModal()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
                     Cancelar
                 </button>
-                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                     Confirmar Pagamento
                 </button>
             </div>
@@ -574,11 +890,11 @@
                 <p id="confirmationEmail" class="text-textdark font-semibold"></p>
                 <p class="text-xs text-gray-600 mt-2">Verifique sua caixa de entrada e spam</p>
             </div>
-            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-[#7e5748] transition-colors button-effect">
                 Fechar
             </button>
         </div>
     </div>
-
+    
 </body>
 </html>
