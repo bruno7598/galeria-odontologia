@@ -27,7 +27,6 @@
         }
     </script>
     <style>
-        /* Estilos mantidos para visualização correta */
         body { box-sizing: border-box; color: #89878C; }
         .logo-principal { font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; font-weight: 700; text-transform: lowercase; }
         .logo-secundaria { font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -46,7 +45,6 @@
     
     <script>
         // 1. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE
-        // ⚠️ ATENÇÃO: SUBSTITUA PELA SUA CHAVE REAL.
         const firebaseConfig = {
             apiKey: "SUA_API_KEY_AQUI", // <--- TROQUE ESTE VALOR PELO SEU REAL
             authDomain: "mari-projeto-f5877.firebaseapp.com",
@@ -87,13 +85,12 @@
                 
             } catch (error) {
                 console.error("ERRO FIREBASE. Verifique API Key e Regras.", error);
-                // Contingência: se falhar, gera o calendário vazio
                 generateCalendar(); 
                 calendarLoaded = true;
             }
         }
 
-        // 3. FUNÇÃO DE GERAÇÃO DO CALENDÁRIO (Agora deve aparecer mesmo com erro do Firebase)
+        // 3. FUNÇÃO DE GERAÇÃO DO CALENDÁRIO
         function generateCalendar() {
             const calendar = document.getElementById('calendar');
             const today = new Date();
@@ -183,8 +180,6 @@
             };
             
             document.getElementById('selectedPlan').textContent = planNames[plan];
-            
-            // ⚠️ ESSENCIAL: Recalcula o total com o novo preço base do plano
             calculateTotal(); 
             updateTimeSlots(); 
             
@@ -228,7 +223,7 @@
             timeSlot.innerHTML = options;
         }
 
-        // 5. CÁLCULO DO TOTAL (Incluindo a regra de horas/planos)
+        // 5. CÁLCULO DO TOTAL (Soma do plano + equipamentos)
         function calculateTotal() {
             let total = selectedPlanPrice;
             
@@ -236,7 +231,7 @@
             let hours = selectedPlan === 'hora' ? 1 : (selectedPlan === 'turno' ? 4 : (selectedPlan === 'dia' ? 10 : 0));
             
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                // Lógica de soma de equipamentos: multiplica por 'hours' ou usa preço fixo
+                // Lógica de soma: Multiplica por 'hours' ou usa preço fixo
                 switch(checkbox.value) { 
                     case 'fotopolimerizador': total += 5 * hours; break;
                     case 'ultrassom': total += 5 * hours; break;
@@ -260,14 +255,29 @@
             
             const timeSlot = document.getElementById('timeSlot').value;
             const clientName = document.getElementById('clientName').value;
-            // ... (coleta dos demais dados) ...
+            const clientEmail = document.getElementById('email').value;
+            const clientCRO = document.getElementById('cro').value;
+            const clientPhone = document.getElementById('phone').value;
             const selectedTimeText = document.getElementById('timeSlot').selectedOptions[0].text;
             const totalAmountText = document.getElementById('totalPrice').textContent;
             const totalAmount = parseFloat(totalAmountText.replace('R$', '').replace(',', '.').trim());
             
             const selectedEquipment = [];
+            // Lógica para obter os nomes dos equipamentos selecionados
+            const equipmentNames = {
+                'fotopolimerizador': 'Fotopolimerizador',
+                'ultrassom': 'Ultrassom e jato de bicarbonato',
+                'autoclave': 'Autoclave',
+                'laser': 'Laser de baixa potência',
+                'raioX': 'Raio X portátil com sensor digital',
+                'kitDentistica': 'Kit de dentística',
+                'kitProtese': 'Kit de prótese',
+                'kitCirurgia': 'Kit de cirurgia estéril',
+                'kitClareamentoConsultorio': 'Kit clareamento consultório',
+                'kitClareamentoCaseiro': 'Kit clareamento caseiro'
+            };
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                // ... (coleta dos nomes dos equipamentos) ...
+                selectedEquipment.push(equipmentNames[checkbox.value] || checkbox.value);
             });
             
             // Definição da descrição da reserva para o calendário (bloqueio de slots)
@@ -278,14 +288,17 @@
             
             // DADOS PARA SALVAR NO FIRESTORE
             const reservationData = {
-                // ... (campos de dados do cliente) ...
-                date: selectedDate, // ⚠️ A data salva que bloqueia o dia no calendário
+                clientName: clientName,
+                cro: clientCRO,
+                phone: clientPhone,
+                email: clientEmail,
+                date: selectedDate, // A data salva que bloqueia o dia no calendário
                 time: timeSlot,
                 clientDescription: clientDescription, 
                 plan: selectedPlan,
                 totalAmount: totalAmount,
                 equipment: selectedEquipment,
-                paymentStatus: 'Aguardando PIX', 
+                paymentStatus: 'Confirmado PIX', 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
@@ -293,24 +306,46 @@
             db.collection("reservations").add(reservationData) 
                 .then((docRef) => {
                     console.log("Reserva salva com ID:", docRef.id);
-                    // Aqui você colocaria o envio de email
+                    // Aqui você chamaria as funções de envio de email
                     
-                    document.getElementById('confirmationEmail').textContent = document.getElementById('email').value;
+                    document.getElementById('confirmationEmail').textContent = clientEmail;
                     document.getElementById('successModal').classList.remove('hidden');
                     document.getElementById('successModal').classList.add('flex');
                     
                 })
                 .catch((error) => {
                     console.error("Erro ao salvar reserva no Firestore:", error);
-                    alert("Erro ao finalizar reserva. Erro: " + error.message);
+                    alert("Erro ao finalizar reserva. Verifique suas Regras de Segurança. Erro: " + error.message);
                 });
         }
         
-        // Funções Auxiliares (Modais)
-        function closePixModal() { /* ... */ }
-        function closeSuccessModal() { /* ... */ }
-        function copyPixKey() { /* ... */ }
-        function scrollToBooking() { /* ... */ }
+        // Funções Auxiliares (Modais e Utilidades)
+        function scrollToBooking() {
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+        function copyPixKey() {
+            const pixKey = document.getElementById('pixKey').textContent;
+            navigator.clipboard.writeText(pixKey).then(() => {
+                alert('Chave PIX copiada!');
+            });
+        }
+        function closePixModal() {
+            document.getElementById('pixModal').classList.add('hidden');
+            document.getElementById('pixModal').classList.remove('flex');
+        }
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
+            
+            document.getElementById('bookingForm').reset();
+            selectedDate = null;
+            selectedPlan = null;
+            selectedPlanPrice = 0;
+            document.getElementById('selectedPlan').textContent = 'Selecione um plano acima';
+            document.getElementById('totalPrice').textContent = 'R$ 0,00';
+            
+            fetchOccupiedSlots(); // Atualiza o calendário
+        }
 
         // 7. INICIALIZAÇÃO
         document.addEventListener('DOMContentLoaded', function() {
@@ -319,7 +354,7 @@
             // Contingência para garantir que o calendário apareça em 3 segundos
             setTimeout(() => { if (!calendarLoaded) generateCalendar(); }, 3000);
 
-            // Listeners para submissão do formulário
+            // Listener para submissão do formulário (abre o modal PIX)
             document.getElementById('bookingForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 if (!selectedDate || !selectedPlan || !document.getElementById('timeSlot').value) {
@@ -334,7 +369,7 @@
                 document.getElementById('pixModal').classList.add('flex');
             });
 
-            // ⚠️ LISTENERS PARA EQUIPAMENTOS: A CADA CLIQUE, RECALCULA O TOTAL!
+            // LISTENERS CRÍTICOS: A CADA CLIQUE NO CHECKBOX, RECALCULA O TOTAL!
             document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', calculateTotal);
             });
@@ -343,30 +378,125 @@
     
 </head>
 <body>
+    <header class="bg-textdark text-textlight shadow-lg sticky top-0 z-50">
+        </header>
+
+    <section id="home" class="gradient-bg text-textdark py-20 relative overflow-hidden">
+        </section>
+
+    <section id="about" class="py-16 bg-secondary"> 
+        </section>
+
     <section id="services" class="py-16 bg-gray-50">
         <div class="container mx-auto px-6">
             <h3 class="text-4xl font-bold text-center text-textdark mb-12">Valores e Serviços</h3>
+            
             <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <div class="..."><button onclick="selectPlan('hora', 70)">Selecionar</button></div>
-                <div class="..."><button onclick="selectPlan('turno', 150)">Selecionar</button></div>
-                <div class="..."><button onclick="selectPlan('dia', 300)">Selecionar</button></div>
+                <div class="bg-white rounded-xl shadow-lg p-8 card-hover relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold text-accent mb-4">Por Hora</h4>
+                        <div class="text-4xl font-bold text-textdark mb-4">R$ 70<span class="text-lg text-gray-500">/hora</span></div>
+                        <p class="text-gray-600 mb-6">Ideal para consultas rápidas e procedimentos simples</p>
+                        <button onclick="selectPlan('hora', 70)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                            Selecionar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 card-hover border-2 border-accent relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="bg-accent text-white px-3 py-1 rounded-full text-sm inline-block mb-4">Mais Popular</div>
+                        <h4 class="text-2xl font-bold text-accent mb-4">Por Turno</h4>
+                        <div class="text-4xl font-bold text-textdark mb-4">R$ 150<span class="text-lg text-gray-500">/turno</span></div>
+                        <p class="text-gray-600 mb-6">Manhã: 08h às 12h | Tarde: 13h às 17h</p>
+                        <button onclick="selectPlan('turno', 150)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                            Selecionar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 card-hover relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold text-accent mb-4">Dia Completo</h4>
+                        <div class="text-4xl font-bold text-textdark mb-4">R$ 300<span class="text-lg text-gray-500">/dia</span></div>
+                        <p class="text-gray-600 mb-6">8h às 18h - Para dias intensivos de atendimento</p>
+                        <button onclick="selectPlan('dia', 300)" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                            Selecionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h4 class="text-2xl font-bold text-textdark mb-6">Equipamentos Adicionais</h4>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Fotopolimerizador</span><span class="font-semibold text-accent">R$ 5,00/h</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Ultrassom e jato de bicarbonato</span><span class="font-semibold text-accent">R$ 5,00/h</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Autoclave</span><span class="font-semibold text-accent">R$ 20,00/ciclo</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Laser de baixa potência</span><span class="font-semibold text-accent">R$ 20,00/h</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Raio X portátil com sensor digital</span><span class="font-semibold text-accent">R$ 50,00/h</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Kit de dentística</span><span class="font-semibold text-accent">R$ 20,00/h</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Kit de prótese</span><span class="font-semibold text-accent">R$ 30,00/h</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Kit de cirurgia estéril</span><span class="font-semibold text-accent">R$ 80,00/kit</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Kit clareamento consultório</span><span class="font-semibold text-accent">R$ 65,00/h</span></div>
+                        <div class="flex justify-between items-center p-3 bg-primary bg-opacity-20 rounded-lg"><span>Kit clareamento caseiro</span><span class="font-semibold text-accent">R$ 90,00/kit</span></div>
+                    </div>
+                </div>
+                <div></div>
             </div>
         </div>
     </section>
 
     <section id="booking" class="py-16 bg-secondary"> 
         <div class="container mx-auto px-6">
+            <h3 class="text-4xl font-bold text-center text-textdark mb-12">Fazer Reserva</h3>
+            
             <div class="max-w-4xl mx-auto">
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <div id="calendar" class="bg-gray-50 rounded-lg p-4">Carregando Calendário...</div>
+                        <h4 class="text-xl font-semibold mb-4 text-textdark">Selecione a Data</h4>
+                        <div id="calendar" class="bg-gray-50 rounded-lg p-4">
+                            Carregando Calendário...
+                        </div>
                     </div>
                     
                     <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h4 class="text-xl font-semibold mb-4 text-textdark">Detalhes da Reserva</h4>
                         <form id="bookingForm" class="space-y-4">
-                            <div id="selectedPlan" class="px-4 py-2 bg-accent text-white rounded-lg">Selecione um plano acima</div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                                <input type="text" id="clientName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                            </div>
                             
-                            <select id="timeSlot" required class="w-full ..."><option value="">Selecione data e plano primeiro</option></select>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CRO</label>
+                                <input type="text" id="cro" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                                <input type="tel" id="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent" placeholder="seu@email.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Plano Selecionado</label>
+                                <div id="selectedPlan" class="px-4 py-2 bg-accent text-white rounded-lg">
+                                    Selecione um plano acima
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Horário</label>
+                                <select id="timeSlot" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                                    <option value="">Selecione data e plano primeiro</option>
+                                </select>
+                            </div>
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Equipamentos e Materiais Adicionais</label>
@@ -374,7 +504,14 @@
                                     <label class="flex items-center text-sm"><input type="checkbox" value="fotopolimerizador" class="mr-2 text-accent focus:ring-accent"> Fotopolimerizador (R$ 5,00/h)</label>
                                     <label class="flex items-center text-sm"><input type="checkbox" value="ultrassom" class="mr-2 text-accent focus:ring-accent"> Ultrassom e jato (R$ 5,00/h)</label>
                                     <label class="flex items-center text-sm"><input type="checkbox" value="autoclave" class="mr-2 text-accent focus:ring-accent"> Autoclave (R$ 20,00/ciclo)</label>
-                                    </div>
+                                    <label class="flex items-center text-sm"><input type="checkbox" value="laser" class="mr-2 text-accent focus:ring-accent"> Laser baixa potência (R$ 20,00/h)</label>
+                                    <label class="flex items-center text-sm"><input type="checkbox" value="raioX" class="mr-2 text-accent focus:ring-accent"> Raio X portátil (R$ 50,00/h)</label>
+                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitDentistica" class="mr-2 text-accent focus:ring-accent"> Kit de dentística (R$ 20,00/h)</label>
+                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitProtese" class="mr-2 text-accent focus:ring-accent"> Kit de prótese (R$ 30,00/h)</label>
+                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitCirurgia" class="mr-2 text-accent focus:ring-accent"> Kit de cirurgia estéril (R$ 80,00/kit)</label>
+                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitClareamentoConsultorio" class="mr-2 text-accent focus:ring-accent"> Kit clareamento consultório (R$ 65,00/h)</label>
+                                    <label class="flex items-center text-sm"><input type="checkbox" value="kitClareamentoCaseiro" class="mr-2 text-accent focus:ring-accent"> Kit clareamento caseiro (R$ 90,00/kit)</label>
+                                </div>
                             </div>
                             
                             <div class="border-t pt-4">
@@ -382,7 +519,10 @@
                                     <span class="font-semibold text-textdark">Total:</span>
                                     <span id="totalPrice" class="text-2xl font-bold text-accent">R$ 0,00</span>
                                 </div>
-                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors font-semibold button-effect">Pagar com PIX</button>
+                                
+                                <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors font-semibold button-effect">
+                                    Pagar com PIX
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -393,16 +533,52 @@
 
     <div id="pixModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold text-center mb-6 text-textdark">Pagamento PIX</h3>
+            
+            <div class="text-center mb-6">
+                <div class="w-48 h-48 bg-gray-200 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <div class="text-6xl">📱</div>
+                </div>
+                <p class="text-gray-600 mb-2">Escaneie o QR Code com seu app do banco</p>
+                <p class="text-sm text-gray-500">Ou copie a chave PIX abaixo:</p>
+            </div>
+            
+            <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
+                <p class="text-xs text-textdark mb-2">Chave PIX:</p>
+                <p id="pixKey" class="font-mono text-sm break-all text-textdark">galeria.coworking@exemplo.com</p>
+                <button onclick="copyPixKey()" class="mt-2 text-accent text-sm hover:underline">Copiar chave</button>
+            </div>
+            
             <div class="text-center mb-6">
                 <p class="text-lg font-semibold text-textdark">Valor: <span id="pixAmount" class="text-accent">R$ 0,00</span></p>
             </div>
-            <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
-                Confirmar Pagamento
-            </button>
+            
+            <div class="flex space-x-4">
+                <button onclick="closePixModal()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="confirmPayment()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                    Confirmar Pagamento
+                </button>
+            </div>
         </div>
     </div>
 
     <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center">
+            <div class="text-6xl mb-4 text-accent">✅</div>
+            <h3 class="text-2xl font-bold text-accent mb-4">Reserva Confirmada!</h3>
+            <p class="text-gray-600 mb-4">Sua reserva foi realizada com sucesso!</p>
+            <div class="bg-primary bg-opacity-30 p-4 rounded-lg mb-6">
+                <p class="text-sm text-textdark mb-2">📧 <strong>Confirmação enviada para:</strong></p>
+                <p id="confirmationEmail" class="text-textdark font-semibold"></p>
+                <p class="text-xs text-gray-600 mt-2">Verifique sua caixa de entrada e spam</p>
+            </div>
+            <button onclick="closeSuccessModal()" class="bg-accent text-white px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors button-effect">
+                Fechar
+            </button>
         </div>
+    </div>
+
 </body>
 </html>
