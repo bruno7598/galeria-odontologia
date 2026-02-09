@@ -3,7 +3,7 @@ name: Deploy Seguro Galeria
 on:
   push:
     branches:
-      - main  # Certifique-se de que sua branch principal se chama main
+      - main  # Se sua branch for master, mude para master aqui
 
 jobs:
   build-and-deploy:
@@ -22,9 +22,8 @@ jobs:
           sed -i "s|___FIREBASE_APP_ID___|${{ secrets.FIREBASE_APP_ID }}|g" backup.html
           sed -i "s|___EMAILJS_PUBLIC_KEY___|${{ secrets.EMAILJS_PUBLIC_KEY }}|g" backup.html
 
-          # EmailJS Config
-          sed -i "s/___EMAILJS_PUBLIC_KEY___/${{ secrets.EMAILJS_PUBLIC_KEY }}/g" index.html
-
       - name: Deploy para GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
+          folder: .
+          branch: gh-pages
