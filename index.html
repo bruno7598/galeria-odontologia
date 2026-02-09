@@ -497,17 +497,17 @@
             const cro = document.getElementById('cancelCRO').value.trim();
             const date = document.getElementById('cancelDate').value;
 
-            if (!email || !date || !cro) {
-                alert("Por favor, preencha E-mail, CRO e a Data da reserva.");
+            if (!email || !cro || !date) {
+                alert("Por favor, preencha E-mail, CRO e a Data da reserva para cancelar.");
                 return;
             }
 
-            if (!confirm("Tem certeza que deseja cancelar esta reserva?")) {
+            if (!confirm("Tem certeza que deseja cancelar esta reserva? Esta ação é permanente.")) {
                 return;
             }
 
             try {
-                // Busca a reserva com os 3 filtros para máxima segurança
+                // Busca a reserva que bate com os 3 critérios: e-mail, cro e data
                 const querySnapshot = await db.collection("reservations")
                     .where("email", "==", email)
                     .where("cro", "==", cro)
@@ -515,11 +515,10 @@
                     .get();
 
                 if (querySnapshot.empty) {
-                    alert("Nenhuma reserva encontrada. Verifique se o E-mail, CRO e Data estão corretos.");
+                    alert("Nenhuma reserva encontrada com esses dados. Verifique se o E-mail e o CRO estão corretos.");
                     return;
                 }
 
-                // Executa a exclusão
                 const batch = db.batch();
                 querySnapshot.forEach((doc) => {
                     batch.delete(doc.ref);
@@ -535,13 +534,20 @@
                 document.getElementById('cancelDate').value = '';
                 document.getElementById('cancelModal').classList.add('hidden');
                 
-                // Atualiza o calendário na tela imediatamente
-                fetchOccupiedSlots(); 
+                // Atualiza o calendário na tela para liberar a vaga
+                if (typeof fetchOccupiedSlots === "function") {
+                    fetchOccupiedSlots();
+                } else {
+                    location.reload(); // Recarrega a página caso a função não seja encontrada
+                }
                 
             } catch (error) {
-                console.error("Erro detalhado:", error);
-                // Se o erro for de índice, o console vai mostrar um link para você clicar e ativar o índice no Firebase
-                alert("Erro ao cancelar: " + error.message);
+                console.error("Erro ao cancelar:", error);
+                if (error.message.includes("permissions")) {
+                    alert("Erro de Permissão: Você precisa liberar a exclusão (delete) nas Regras do Firebase Console.");
+                } else {
+                    alert("Erro ao cancelar: " + error.message);
+                }
             }
         }
 
