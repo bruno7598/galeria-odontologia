@@ -283,44 +283,46 @@
         function updateTimeSlots() {
             const timeSlot = document.getElementById('timeSlot');
             
-            if (!selectedPlan) {
-                timeSlot.innerHTML = '<option value="">Selecione um plano no topo</option>';
-                return;
-            }
-
-            if (!selectedDate) {
-                timeSlot.innerHTML = '<option value="">Selecione a data no calendário</option>';
+            if (!selectedPlan || !selectedDate) {
+                timeSlot.innerHTML = '<option value="">Selecione plano e data primeiro</option>';
                 return;
             }
 
             const occupiedSlots_day = occupiedSlots[selectedDate] || [];
+            // Criamos uma lista de horas que já estão "pegas" (ex: "08:00")
             const occupiedTimes = occupiedSlots_day.map(slot => slot.time);
-            
+            // Criamos uma string com todas as descrições para facilitar a busca por "Dia Completo" ou "Turno"
+            const descriptions = occupiedSlots_day.map(slot => slot.client).join(' ');
+
             let options = '<option value="">Selecione o horário</option>';
             
             if (selectedPlan === 'hora') {
                 const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
                 hours.forEach(hour => {
-                    if (!occupiedTimes.includes(hour)) {
+                    // Bloqueia se a hora exata estiver ocupada OU se o dia todo estiver reservado
+                    const isBlocked = occupiedTimes.includes(hour) || descriptions.includes('Dia Completo');
+                    if (!isBlocked) {
                         options += `<option value="${hour}">${hour} (1 hora)</option>`;
                     }
                 });
+                
+            
             } else if (selectedPlan === 'turno') {
-                // Checa se o turno da manhã está ocupado por alguma reserva no período OU por dia completo
-                const morningOccupied = occupiedSlots_day.some(slot => slot.client.includes('Turno Manhã') || slot.client.includes('Dia Completo') || (parseInt(slot.time.split(':')[0]) >= 8 && parseInt(slot.time.split(':')[0]) < 12));
+                const morningBlocked = descriptions.includes('Manhã') || descriptions.includes('Dia Completo');
+                const afternoonBlocked = descriptions.includes('Tarde') || descriptions.includes('Dia Completo');
                 
-                // Checa se o turno da tarde está ocupado
-                const afternoonOccupied = occupiedSlots_day.some(slot => slot.client.includes('Turno Tarde') || slot.client.includes('Dia Completo') || (parseInt(slot.time.split(':')[0]) >= 13 && parseInt(slot.time.split(':')[0]) < 17));
-                
-                if (!morningOccupied) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
-                if (!afternoonOccupied) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
+                if (!morningBlocked) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
+                if (!afternoonBlocked) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
             } else if (selectedPlan === 'dia') {
-                // Checa se há qualquer reserva no dia
-                const dayOccupied = occupiedSlots_day.length > 0;
-                if (!dayOccupied) options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
+                // Só permite reservar o dia se não houver NENHUMA outra reserva (nem hora, nem turno)
+                if (occupiedSlots_day.length === 0) {
+                    options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
+                }
             }
             
-            timeSlot.innerHTML = options;
+            timeSlot.innerHTML = options === '<option value="">Selecione o horário</option>' 
+                ? '<option value="">Sem horários disponíveis para este plano</option>' 
+                : options;
         }
 
         function selectPlan(plan, price) {
@@ -402,17 +404,27 @@
          * 6. FUNÇÃO confirmPayment() PARA SALVAR NO FIRESTORE
          */
         function confirmPayment() {
-            closePixModal();
-            
+            // 1. Verificar obrigatoriedade do comprovante
+            const fileInput = document.getElementById('pixFile');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                alert("Por favor, anexe o comprovante do PIX para finalizar sua reserva.");
+                return; // Interrompe a função aqui mesmo
+            }
+
+            // Se o arquivo existe, prosseguimos com a lógica
             const timeSlot = document.getElementById('timeSlot').value;
             const clientName = document.getElementById('clientName').value;
             const clientEmail = document.getElementById('email').value;
             const clientCRO = document.getElementById('cro').value;
             const clientPhone = document.getElementById('phone').value;
-            const selectedTimeText = document.getElementById('timeSlot').selectedOptions[0].text;
+            
+            // Captura o texto do horário selecionado com segurança
+            const timeSlotSelect = document.getElementById('timeSlot');
+            const selectedTimeText = timeSlotSelect.options[timeSlotSelect.selectedIndex].text;
+            
             const totalAmountText = document.getElementById('totalPrice').textContent;
             const totalAmount = parseFloat(totalAmountText.replace('R$', '').replace(',', '.').trim());
-            
+
             const selectedEquipment = [];
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
                 const equipmentNames = {
@@ -427,14 +439,16 @@
                     'kitClareamentoConsultorio': 'Kit clareamento consultório',
                     'kitClareamentoCaseiro': 'Kit clareamento caseiro'
                 };
-                selectedEquipment.push(equipmentNames[checkbox.value]);
+                if (equipmentNames[checkbox.value]) {
+                    selectedEquipment.push(equipmentNames[checkbox.value]);
+                }
             });
             
             let clientDescription = '';
             if (selectedPlan === 'hora') {
                 clientDescription = `${clientName} - ${selectedTimeText} (Hora)`;
             } else if (selectedPlan === 'turno') {
-                clientDescription = `${clientName} - ${selectedTimeText.includes('Manhã') ? 'Turno Manhã' : 'Turno Tarde'}`;
+                clientDescription = `${clientName} - Turno ${timeSlot.includes('08:00') ? 'Manhã' : 'Tarde'}`;
             } else if (selectedPlan === 'dia') {
                 clientDescription = `${clientName} - Dia Completo`;
             }
@@ -450,29 +464,92 @@
                 plan: selectedPlan,
                 totalAmount: totalAmount,
                 equipment: selectedEquipment,
-                paymentStatus: 'Confirmado PIX', 
+                paymentStatus: 'Aguardando Verificação (PIX Anexado)', 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // SALVA NO FIRESTORE
+            // 2. Fechar o modal do PIX apenas após a validação do arquivo
+            closePixModal();
+
+            // 3. SALVA NO FIRESTORE
             db.collection("reservations").add(reservationData)
                 .then((docRef) => {
                     console.log("Reserva salva com ID:", docRef.id);
                     
+                    // Envio de e-mails
                     sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
                     sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
                     
+                    // Mostrar modal de sucesso
                     document.getElementById('confirmationEmail').textContent = clientEmail;
                     document.getElementById('successModal').classList.remove('hidden');
                     document.getElementById('successModal').classList.add('flex');
-                    
                 })
                 .catch((error) => {
                     console.error("Erro ao salvar reserva no Firestore:", error);
-                    alert("Erro ao finalizar reserva. Tente novamente ou entre em contato. Erro: " + error.message);
+                    alert("Erro ao finalizar reserva. Tente novamente. Erro: " + error.message);
                 });
         }
 
+
+        async function processCancellation() {
+            const email = document.getElementById('cancelEmail').value.trim();
+            const cro = document.getElementById('cancelCRO').value.trim();
+            const date = document.getElementById('cancelDate').value;
+
+            if (!email || !cro || !date) {
+                alert("Por favor, preencha E-mail, CRO e a Data da reserva para cancelar.");
+                return;
+            }
+
+            if (!confirm("Tem certeza que deseja cancelar esta reserva? Esta ação é permanente.")) {
+                return;
+            }
+
+            try {
+                // Busca a reserva que bate com os 3 critérios: e-mail, cro e data
+                const querySnapshot = await db.collection("reservations")
+                    .where("email", "==", email)
+                    .where("cro", "==", cro)
+                    .where("date", "==", date)
+                    .get();
+
+                if (querySnapshot.empty) {
+                    alert("Nenhuma reserva encontrada com esses dados. Verifique se o E-mail e o CRO estão corretos.");
+                    return;
+                }
+
+                const batch = db.batch();
+                querySnapshot.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+
+                await batch.commit();
+
+                alert("Reserva cancelada com sucesso!");
+                
+                // Limpa os campos e fecha o modal
+                document.getElementById('cancelEmail').value = '';
+                document.getElementById('cancelCRO').value = '';
+                document.getElementById('cancelDate').value = '';
+                document.getElementById('cancelModal').classList.add('hidden');
+                
+                // Atualiza o calendário na tela para liberar a vaga
+                if (typeof fetchOccupiedSlots === "function") {
+                    fetchOccupiedSlots();
+                } else {
+                    location.reload(); // Recarrega a página caso a função não seja encontrada
+                }
+                
+            } catch (error) {
+                console.error("Erro ao cancelar:", error);
+                if (error.message.includes("permissions")) {
+                    alert("Erro de Permissão: Você precisa liberar a exclusão (delete) nas Regras do Firebase Console.");
+                } else {
+                    alert("Erro ao cancelar: " + error.message);
+                }
+            }
+        }
 
         function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
             const equipmentList = equipment.length > 0 ? 
@@ -644,6 +721,13 @@ Sistema Galeria Coworking`
                 Fazer Reserva
             </button>
         </div>
+
+        <div class="mt-8 text-center">
+            <button onclick="document.getElementById('cancelModal').classList.remove('hidden')" class="text-sm text-gray-500 underline hover:text-red-600 transition-colors">
+                Deseja cancelar uma reserva existente?
+            </button>
+        </div>
+
     </section>
 
     <section id="about" class="py-16 bg-secondary"> 
@@ -864,6 +948,16 @@ Sistema Galeria Coworking`
                 <p id="pixKey" class="font-mono text-sm break-all text-textdark">galeria.coworking@exemplo.com</p>
                 <button onclick="copyPixKey()" class="mt-2 text-accent text-sm hover:underline">Copiar chave</button>
             </div>
+
+            <div class="bg-gray-50 p-3 text-xs break-all mb-4 border border-dashed border-accent rounded text-center">
+                000.000.000-00 (Exemplo de Chave)
+            </div>
+
+            <div class="mb-4 text-left">
+                <label class="block text-xs font-bold text-gray-700 mb-1">Anexar Comprovante (Obrigatório):</label>
+                <input type="file" id="pixFile" accept="image/*,application/pdf" 
+                    class="w-full text-xs p-2 border rounded bg-white file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-white hover:file:bg-[#7e5748]">
+            </div>
             
             <div class="text-center mb-6">
                 <p class="text-lg font-semibold text-textdark">Valor: <span id="pixAmount" class="text-2xl font-bold text-accent">R$ 0,00</span></p>
@@ -895,6 +989,28 @@ Sistema Galeria Coworking`
             </button>
         </div>
     </div>
+
+    <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+        <h3 class="text-2xl font-bold text-accent mb-4 text-center">Cancelar Agenda</h3>FIREBASE_API_KEY
+        <p class="text-gray-600 mb-6 text-sm text-center">Insira o e-mail utilizado na reserva e a data para cancelar.</p>
+        
+        <div class="space-y-4">
+            <input type="email" id="cancelEmail" placeholder="E-mail da reserva" class="w-full p-3 border rounded-lg focus:ring-accent focus:border-accent">
+            <input type="text" id="cancelCRO" placeholder="Seu CRO" class="w-full p-3 border rounded-lg">
+            <input type="date" id="cancelDate" class="w-full p-3 border rounded-lg focus:ring-accent focus:border-accent">
+        </div>
+
+        <div class="flex gap-4 mt-8">
+            <button onclick="document.getElementById('cancelModal').classList.add('hidden')" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition-colors">
+                Voltar
+            </button>
+            <button onclick="processCancellation()" class="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors">
+                Confirmar Cancelamento
+            </button>
+        </div>
+    </div>
+</div>
     
 </body>
 </html>

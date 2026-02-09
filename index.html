@@ -149,13 +149,14 @@
         // 2. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE FIRESTORE
         // ⚠️ SUBSTITUA PELAS SUAS CHAVES REAIS DO CONSOLE DO FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSyDh40_kOaZeZYnx89QeH0C21Ngmw7Sf15s",
-            authDomain: "mari-clinica.firebaseapp.com",
-            projectId: "mari-clinica",
-            storageBucket: "mari-clinica.firebasestorage.app",
-            messagingSenderId: "856573842291",
-            appId: "1:856573842291:web:ce80a6e8e737fc16b3eb06",
-            measurementId: "G-7JL8YJW008"
+            apiKey: "___FIREBASE_API_KEY___",
+            authDomain: "___FIREBASE_AUTH_DOMAIN___",
+            projectId: "___FIREBASE_PROJECT_ID___",
+            storageBucket: "___FIREBASE_STORAGE_BUCKET___",
+            messagingSenderId: "___FIREBASE_MESSAGING_SENDER_ID___",
+            appId: "___FIREBASE_APP_ID___",
+            measurementId: "___FIREBASE_MEASUREMENT_ID___"
+
         };
 
         // Initialize Firebase
@@ -684,7 +685,7 @@ Sistema Galeria Coworking`
                 checkbox.addEventListener('change', calculateTotal);
             });
 
-            emailjs.init('ckNNBdvQMD-hnrc_T');
+            emailjs.init("___EMAILJS_PUBLIC_KEY___");
         });
     </script>
     
