@@ -16,36 +16,145 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#FBF8E9', 
-                        secondary: '#FBF8E9', 
-                        accent: '#996E5C', 
-                        textdark: '#89878C', 
-                        textlight: '#FBF8E9' 
+                        primary: '#FBF8E9', // Bege Claro (Fundo Principal)
+                        secondary: '#FBF8E9', // Bege Claro (Fundo de Seções)
+                        accent: '#996E5C', // Cobre/Marrom (Destaque, Botões, Destaque de Texto)
+                        textdark: '#89878C', // Cinza Chumbo (Texto Principal)
+                        textlight: '#FBF8E9' // Bege Claro (Texto em fundo escuro)
                     }
                 }
             }
         }
     </script>
     <style>
-        body { box-sizing: border-box; color: #89878C; }
-        .logo-principal { font-family: ui-serif, Georgia, serif; font-weight: 700; text-transform: lowercase; }
-        .logo-secundaria { font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
-        .gradient-bg { background: linear-gradient(135deg, #FBF8E9 0%, #EFEBE0 100%); }
-        .card-hover { transition: all 0.4s ease; }
-        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1); }
-        .calendar-day { transition: all 0.2s ease; cursor: pointer; border-radius: 0.5rem; padding: 0.5rem; text-align: center; }
-        .calendar-day:hover:not(.text-gray-400) { background-color: #996E5C; color: white; }
-        .selected { background-color: #996E5C !important; color: white; font-weight: bold; }
-        .tooltip { position: relative; }
-        .tooltip .tooltiptext { visibility: hidden; width: 140px; background-color: #3C403B; color: #fff; text-align: center; border-radius: 6px; padding: 5px; position: absolute; z-index: 10; bottom: 125%; left: 50%; margin-left: -70px; opacity: 0; transition: opacity 0.3s; font-size: 10px; }
-        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        body {
+            box-sizing: border-box;
+            color: #89878C; /* Cinza Chumbo */
+        }
         
-        /* Estilo do Campo de Upload */
-        .file-upload-wrapper { border: 2px dashed #996E5C; padding: 15px; border-radius: 10px; text-align: center; background: #fdfcf4; margin-top: 15px; }
+        .logo-principal {
+            font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+            font-weight: 700;
+            text-transform: lowercase; 
+        }
+        .logo-secundaria {
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #FBF8E9 0%, #EFEBE0 100%); 
+        }
+        
+        .card-hover, .button-effect {
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 0 10px rgba(182, 224, 198, 0.5);
+        }
+
+        .button-effect:hover::before {
+            transform: scale(3.5);
+            opacity: 0;
+        }
+
+        .button-effect::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            pointer-events: none;
+        }
+        
+        .calendar-day {
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day:hover {
+            background-color: #e0f2fe;
+        }
+        
+        .occupied {
+            background-color: #fecaca !important;
+            color: #991b1b;
+        }
+        
+        .selected {
+            background-color: #996E5C !important; /* Cor accent */
+            color: white;
+            font-weight: bold;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #3C403B;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #3C403B transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* ESTILO NOVO PARA O UPLOAD DE COMPROVANTE */
+        .receipt-area {
+            border: 2px dashed #996E5C;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            background: #fdfdfd;
+        }
     </style>
     
     <script>
-        // --- CONFIGURAÇÃO FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyDh40_kOaZeZYnx89QeH0C21Ngmw7Sf15s",
             authDomain: "mari-clinica.firebaseapp.com",
@@ -59,25 +168,27 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(app);
 
-        // --- VARIÁVEIS DE CONTROLE ---
         let selectedDate = null;
         let selectedPlan = null;
         let selectedPlanPrice = 0;
         let occupiedSlots = {}; 
-        const OWNER_EMAIL = 'mariodontologia1@gmail.com'; 
-
+        
         async function fetchOccupiedSlots() {
             try {
                 const snapshot = await db.collection("reservations").get();
                 occupiedSlots = {};
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    if (!occupiedSlots[data.date]) occupiedSlots[data.date] = [];
-                    occupiedSlots[data.date].push({ time: data.time, client: data.clientDescription });
+                    const date = data.date; 
+                    if (!occupiedSlots[date]) occupiedSlots[date] = [];
+                    occupiedSlots[date].push({
+                        time: data.time,
+                        client: data.clientDescription
+                    });
                 });
                 generateCalendar(); 
             } catch (error) {
-                console.error("Erro Firebase:", error);
+                console.error("Erro ao buscar reservas:", error);
                 generateCalendar(); 
             }
         }
@@ -87,201 +198,253 @@
             const today = new Date();
             const currentMonth = today.getMonth();
             const currentYear = today.getFullYear();
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const firstDay = new Date(currentYear, currentMonth, 1);
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const startingDayOfWeek = firstDay.getDay();
             const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             
-            let html = `<div class="text-center mb-4"><h5 class="font-bold">${monthNames[currentMonth]} ${currentYear}</h5></div>`;
-            html += `<div class="grid grid-cols-7 gap-1 text-xs font-bold text-center mb-2"><div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div></div>`;
-            html += `<div class="grid grid-cols-7 gap-1">`;
-
-            for (let i = 0; i < firstDay; i++) html += '<div></div>';
+            let calendarHTML = `<div class="text-center mb-4"><h5 class="text-lg font-semibold">${monthNames[currentMonth]} ${currentYear}</h5></div>`;
+            calendarHTML += `<div class="grid grid-cols-7 gap-1 mb-2 text-center text-sm font-medium text-gray-500 p-2">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div></div>
+                <div class="grid grid-cols-7 gap-1">`;
+            
+            for (let i = 0; i < startingDayOfWeek; i++) calendarHTML += '<div class="p-2"></div>';
             
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(currentYear, currentMonth, day);
-                const dateStr = date.toISOString().split('T')[0];
-                const isPast = date < new Date().setHours(0,0,0,0);
-                const dayOcc = occupiedSlots[dateStr] || [];
+                const dateString = date.toISOString().split('T')[0];
+                const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const isPast = date < todayOnly; 
+                const dayOccupied = occupiedSlots[dateString] || [];
+                const hasOccupied = dayOccupied.length > 0;
                 
-                let cls = 'calendar-day';
-                if (isPast) cls += ' text-gray-400 cursor-not-allowed';
-                else if (dayOcc.length > 0) cls += ' bg-yellow-100 text-yellow-800 tooltip';
-
-                html += `<div class="${cls}" onclick="${!isPast ? `selectDate('${dateStr}', this)` : ''}">${day}${dayOcc.length > 0 ? `<span class="tooltiptext">Ocupado</span>` : ''}</div>`;
+                let dayClass = 'calendar-day p-2 text-center cursor-pointer rounded-lg';
+                let tooltipContent = '';
+                
+                if (isPast) {
+                    dayClass += ' text-gray-400 cursor-not-allowed';
+                } else if (hasOccupied) {
+                    dayClass += ' bg-yellow-100 text-yellow-800 tooltip';
+                    const uniqueInfo = [...new Set(dayOccupied.map(s => s.client))];
+                    tooltipContent = `<span class="tooltiptext">Ocupado: ${uniqueInfo.join(', ')}</span>`;
+                } else {
+                    dayClass += ' hover:bg-primary hover:bg-opacity-50'; 
+                }
+                
+                calendarHTML += `<div class="${dayClass}" onclick="${!isPast ? `selectDate('${dateString}', this)` : ''}">${day}${tooltipContent}</div>`;
             }
-            calendar.innerHTML = html + `</div>`;
+            calendar.innerHTML = calendarHTML + '</div>';
         }
 
         function selectDate(dateString, element) {
-            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            document.querySelectorAll('.calendar-day').forEach(day => day.classList.remove('selected'));
             element.classList.add('selected');
             selectedDate = dateString;
             updateTimeSlots();
         }
 
+        function updateTimeSlots() {
+            const timeSlot = document.getElementById('timeSlot');
+            if (!selectedPlan) { timeSlot.innerHTML = '<option value="">Selecione um plano no topo</option>'; return; }
+            if (!selectedDate) { timeSlot.innerHTML = '<option value="">Selecione a data no calendário</option>'; return; }
+
+            const occupiedSlots_day = occupiedSlots[selectedDate] || [];
+            const occupiedTimes = occupiedSlots_day.map(slot => slot.time);
+            let options = '<option value="">Selecione o horário</option>';
+            
+            if (selectedPlan === 'hora') {
+                const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+                hours.forEach(hour => { if (!occupiedTimes.includes(hour)) options += `<option value="${hour}">${hour} (1 hora)</option>`; });
+            } else if (selectedPlan === 'turno') {
+                const morningOccupied = occupiedSlots_day.some(slot => slot.client.includes('Turno Manhã') || slot.client.includes('Dia Completo'));
+                const afternoonOccupied = occupiedSlots_day.some(slot => slot.client.includes('Turno Tarde') || slot.client.includes('Dia Completo'));
+                if (!morningOccupied) options += '<option value="08:00">Turno Manhã (08h às 12h)</option>';
+                if (!afternoonOccupied) options += '<option value="13:00">Turno Tarde (13h às 17h)</option>';
+            } else if (selectedPlan === 'dia') {
+                if (occupiedSlots_day.length === 0) options += '<option value="08:00">Dia Completo (08h às 18h)</option>';
+            }
+            timeSlot.innerHTML = options;
+        }
+
         function selectPlan(plan, price) {
             selectedPlan = plan;
             selectedPlanPrice = price;
-            document.getElementById('selectedPlan').textContent = plan.toUpperCase();
-            updateTimeSlots();
+            const planNames = { 'hora': 'Por Hora - R$ 70,00', 'turno': 'Por Turno - R$ 150,00', 'dia': 'Dia Completo - R$ 300,00' };
+            document.getElementById('selectedPlan').textContent = planNames[plan];
+            updateTimeSlots(); 
             calculateTotal();
             document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function updateTimeSlots() {
-            const slot = document.getElementById('timeSlot');
-            if (!selectedPlan || !selectedDate) {
-                slot.innerHTML = '<option>Selecione plano e data</option>';
-                return;
-            }
-            let options = '<option value="">Selecione o horário</option>';
-            if (selectedPlan === 'hora') {
-                ['08:00', '10:00', '14:00', '16:00'].forEach(h => options += `<option value="${h}">${h}</option>`);
-            } else if (selectedPlan === 'turno') {
-                options += '<option value="08:00">Manhã (08h-12h)</option><option value="13:00">Tarde (13h-17h)</option>';
-            } else {
-                options += '<option value="08:00">Dia Completo</option>';
-            }
-            slot.innerHTML = options;
-        }
-
         function calculateTotal() {
             let total = selectedPlanPrice;
-            document.querySelectorAll('input[type="checkbox"]:checked').forEach(c => total += 10); // Simplificado para exemplo
-            document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2)}`;
+            let hours = selectedPlan === 'turno' ? 4 : (selectedPlan === 'dia' ? 10 : 1);
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const prices = { 'fotopolimerizador': 5*hours, 'ultrassom': 5*hours, 'autoclave': 20, 'laser': 20*hours, 'raioX': 50*hours, 'kitDentistica': 20*hours, 'kitProtese': 30*hours, 'kitCirurgia': 80, 'kitClareamentoConsultorio': 65*hours, 'kitClareamentoCaseiro': 90 };
+                total += prices[checkbox.value] || 0;
+            });
+            document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
 
-        // --- FUNÇÕES DE PAGAMENTO E COMPROVANTE ---
+        function scrollToBooking() { document.getElementById('booking').scrollIntoView({ behavior: 'smooth' }); }
+
         function copyPixKey() {
-            navigator.clipboard.writeText('mariodontologia1@gmail.com');
-            alert('Chave PIX copiada!');
+            navigator.clipboard.writeText('mariodontologia1@gmail.com').then(() => alert('Chave PIX copiada!'));
         }
 
-        function validateAndConfirm() {
+        function closePixModal() {
+            document.getElementById('pixModal').classList.add('hidden');
+            document.getElementById('pixModal').classList.remove('flex');
+        }
+
+        function closeSuccessModal() {
+            location.reload(); // Simplificado para resetar o estado da agenda
+        }
+
+        /* NOVA LÓGICA DE VALIDAÇÃO DO COMPROVANTE */
+        function validateReceiptBeforeConfirm() {
             const fileInput = document.getElementById('receiptFile');
-            if (fileInput.files.length === 0) {
-                alert("⚠️ Erro: Você precisa anexar a foto do comprovante PIX para continuar.");
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("⚠️ Por favor, anexe a foto ou PDF do seu comprovante PIX antes de confirmar.");
                 return;
             }
             confirmPayment();
         }
 
         function confirmPayment() {
-            const btn = document.getElementById('btnConfirmar');
-            btn.innerText = "Processando...";
-            btn.disabled = true;
-
-            const data = {
-                clientName: document.getElementById('clientName').value,
-                email: document.getElementById('email').value,
+            closePixModal();
+            const timeSlot = document.getElementById('timeSlot').value;
+            const clientName = document.getElementById('clientName').value;
+            const clientEmail = document.getElementById('email').value;
+            const totalAmountText = document.getElementById('totalPrice').textContent;
+            
+            const reservationData = {
+                clientName: clientName,
+                cro: document.getElementById('cro').value,
+                phone: document.getElementById('phone').value,
+                email: clientEmail,
                 date: selectedDate,
-                time: document.getElementById('timeSlot').value,
-                total: document.getElementById('totalPrice').textContent,
-                status: 'Aguardando Conferência de Comprovante'
+                time: timeSlot,
+                clientDescription: `${clientName} - ${selectedPlan}`, 
+                plan: selectedPlan,
+                totalAmount: totalAmountText,
+                paymentStatus: 'Aguardando Validação do Comprovante', 
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            db.collection("reservations").add(data).then(() => {
-                // Aqui chamaria o EmailJS (usando seus IDs salvos)
-                alert("Reserva enviada com sucesso! Analisaremos seu comprovante.");
-                location.reload();
-            });
+            db.collection("reservations").add(reservationData).then(() => {
+                sendEmailConfirmation(clientEmail, clientName, selectedDate, totalAmountText);
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+            }).catch(err => alert("Erro ao salvar: " + err.message));
+        }
+
+        function sendEmailConfirmation(email, name, date, total) {
+            const SERVICE_ID = 'service_s2cozam';
+            const TEMPLATE_ID = 'template_8u47tu5';
+            const PUBLIC_KEY = '7CIpJQwSMHZZWH_Ng';
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, { user_email: email, user_name: name, to_name: name, from_name: 'Galeria Coworking', message: `Reserva solicitada para ${date}. Valor: ${total}. Seu comprovante foi recebido e estamos validando.` }, PUBLIC_KEY);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchOccupiedSlots();
-            document.getElementById('bookingForm').addEventListener('submit', (e) => {
+            document.getElementById('bookingForm').addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('pixAmount').textContent = document.getElementById('totalPrice').textContent;
                 document.getElementById('pixModal').classList.remove('hidden');
                 document.getElementById('pixModal').classList.add('flex');
             });
+            document.querySelectorAll('input[type="checkbox"]').forEach(c => c.addEventListener('change', calculateTotal));
             emailjs.init('ckNNBdvQMD-hnrc_T');
         });
     </script>
 </head>
-
 <body class="bg-primary">
-    <header class="bg-textdark text-white p-4 sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="logo-principal text-2xl">galeria.</h1>
-            <button onclick="document.getElementById('booking').scrollIntoView()" class="bg-accent px-4 py-2 rounded">Reservar</button>
+    <header class="bg-textdark text-textlight shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#home" class="flex items-center hover:opacity-80 transition-opacity">
+                    <img src="image.png" alt="Logo" class="h-10 w-auto"> 
+                </a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#home" class="hover:text-accent transition-colors">Início</a>
+                    <a href="#services" class="hover:text-accent transition-colors">Serviços</a>
+                    <a href="#booking" onclick="scrollToBooking()" class="bg-accent text-white px-4 py-2 rounded-lg">Agendar</a>
+                </nav>
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-6 py-10">
-        <section id="services" class="grid md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-white p-6 rounded-xl shadow card-hover text-center">
-                <h3 class="font-bold text-xl">Por Hora</h3>
-                <p class="text-2xl font-bold text-accent my-4">R$ 70,00</p>
-                <button onclick="selectPlan('hora', 70)" class="bg-accent text-white w-full py-2 rounded">Selecionar</button>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow card-hover text-center border-2 border-accent">
-                <h3 class="font-bold text-xl">Por Turno</h3>
-                <p class="text-2xl font-bold text-accent my-4">R$ 150,00</p>
-                <button onclick="selectPlan('turno', 150)" class="bg-accent text-white w-full py-2 rounded">Selecionar</button>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow card-hover text-center">
-                <h3 class="font-bold text-xl">Dia Inteiro</h3>
-                <p class="text-2xl font-bold text-accent my-4">R$ 300,00</p>
-                <button onclick="selectPlan('dia', 300)" class="bg-accent text-white w-full py-2 rounded">Selecionar</button>
-            </div>
-        </section>
+    <section id="home" class="gradient-bg text-textdark py-20 text-center">
+        <h2 class="text-6xl logo-principal">galeria.</h2>
+        <p class="logo-secundaria text-xl mt-3 opacity-80">Odontologia Integrada</p>
+        <button onclick="scrollToBooking()" class="mt-8 bg-accent text-white px-8 py-4 rounded-lg button-effect">Fazer Reserva</button>
+    </section>
 
-        <section id="booking" class="bg-white p-8 rounded-2xl shadow-lg grid md:grid-cols-2 gap-10">
+    <section id="booking" class="py-16 bg-white container mx-auto px-6 rounded-3xl shadow-xl my-10">
+        <div class="grid md:grid-cols-2 gap-10">
             <div>
-                <h3 class="text-2xl font-bold mb-6">1. Escolha a Data</h3>
-                <div id="calendar" class="bg-gray-50 p-4 rounded-xl shadow-inner"></div>
+                <h3 class="text-2xl font-bold mb-4">1. Selecione a Data</h3>
+                <div id="calendar" class="bg-secondary p-4 rounded-xl"></div>
             </div>
             <div>
-                <h3 class="text-2xl font-bold mb-6">2. Seus Dados</h3>
+                <h3 class="text-2xl font-bold mb-4">2. Dados da Reserva</h3>
                 <form id="bookingForm" class="space-y-4">
                     <input type="text" id="clientName" placeholder="Nome Completo" class="w-full p-3 border rounded" required>
-                    <input type="email" id="email" placeholder="Seu melhor E-mail" class="w-full p-3 border rounded" required>
+                    <input type="email" id="email" placeholder="E-mail" class="w-full p-3 border rounded" required>
                     <div class="grid grid-cols-2 gap-4">
                         <input type="text" id="cro" placeholder="CRO" class="w-full p-3 border rounded" required>
                         <input type="text" id="phone" placeholder="WhatsApp" class="w-full p-3 border rounded" required>
                     </div>
-                    <select id="timeSlot" class="w-full p-3 border rounded" required>
-                        <option value="">Selecione a data primeiro</option>
-                    </select>
+                    <select id="timeSlot" class="w-full p-3 border rounded" required></select>
                     
-                    <div class="p-4 bg-primary rounded-lg">
-                        <p class="font-bold">Plano: <span id="selectedPlan" class="text-accent">Nenhum</span></p>
-                        <p class="text-2xl font-bold">Total: <span id="totalPrice">R$ 0,00</span></p>
+                    <div class="p-4 bg-primary rounded-lg font-bold">
+                        <p>Plano: <span id="selectedPlan" class="text-accent">Selecione um plano acima</span></p>
+                        <p class="text-2xl">Total: <span id="totalPrice">R$ 0,00</span></p>
                     </div>
                     
-                    <button type="submit" class="w-full bg-accent text-white py-4 rounded-xl font-bold text-lg hover:bg-opacity-90 transition-all">
-                        Ir para Pagamento (PIX)
-                    </button>
+                    <div class="grid grid-cols-1 gap-2 text-sm">
+                        <label><input type="checkbox" value="fotopolimerizador"> Fotopolimerizador (+R$5/h)</label>
+                        <label><input type="checkbox" value="autoclave"> Autoclave (+R$20)</label>
+                        </div>
+
+                    <button type="submit" class="w-full bg-accent text-white py-4 rounded-xl font-bold text-lg button-effect">Pagar via PIX</button>
                 </form>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <div id="pixModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[100] p-4">
         <div class="bg-white p-8 rounded-2xl max-w-md w-full shadow-2xl">
             <h3 class="text-2xl font-bold text-center mb-2">Pagamento PIX</h3>
-            <p class="text-center text-gray-500 mb-6 text-sm">Sua reserva ficará pré-agendada até confirmarmos o comprovante.</p>
-            
             <div class="text-center text-3xl font-bold text-accent mb-6" id="pixAmount">R$ 0,00</div>
             
-            <div class="bg-gray-100 p-4 rounded-lg mb-6">
+            <div class="bg-gray-100 p-4 rounded-lg mb-4">
                 <p class="text-xs font-bold text-gray-400 uppercase">Chave PIX (E-mail):</p>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm font-mono">mariodontologia1@gmail.com</span>
+                    <span id="pixKey" class="text-sm font-mono">mariodontologia1@gmail.com</span>
                     <button onclick="copyPixKey()" class="text-accent font-bold">Copiar</button>
                 </div>
             </div>
 
-            <div class="file-upload-wrapper">
-                <p class="text-sm font-bold text-textdark mb-2">📸 Anexe o comprovante (Foto/PDF):</p>
+            <div class="receipt-area">
+                <p class="text-sm font-bold mb-2">Anexe o Comprovante:</p>
                 <input type="file" id="receiptFile" accept="image/*,.pdf" class="text-xs w-full">
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-6">
-                <button onclick="document.getElementById('pixModal').classList.add('hidden')" class="py-3 border rounded-lg font-bold">Cancelar</button>
-                <button id="btnConfirmar" onclick="validateAndConfirm()" class="bg-green-600 text-white py-3 rounded-lg font-bold">Confirmar</button>
+                <button onclick="closePixModal()" class="py-3 border rounded-lg font-bold">Voltar</button>
+                <button onclick="validateReceiptBeforeConfirm()" class="bg-green-600 text-white py-3 rounded-lg font-bold">Já paguei!</button>
             </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[100] p-4">
+        <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">✓</div>
+            <h3 class="text-2xl font-bold mb-2">Solicitação Enviada!</h3>
+            <p class="text-gray-600 mb-6">Sua reserva está sendo processada. Enviamos um e-mail para <span id="confirmationEmail" class="font-bold text-accent"></span>.</p>
+            <button onclick="closeSuccessModal()" class="w-full bg-accent text-white py-3 rounded-lg font-bold">Entendido</button>
         </div>
     </div>
 
