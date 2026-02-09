@@ -493,31 +493,33 @@
 
 
         async function processCancellation() {
-            const email = document.getElementById('cancelEmail').value;
+            const email = document.getElementById('cancelEmail').value.trim();
+            const cro = document.getElementById('cancelCRO').value.trim();
             const date = document.getElementById('cancelDate').value;
 
-            if (!email || !date) {
-                alert("Por favor, preencha o e-mail e a data da reserva.");
+            if (!email || !date || !cro) {
+                alert("Por favor, preencha E-mail, CRO e a Data da reserva.");
                 return;
             }
 
-            if (!confirm("Tem certeza que deseja cancelar esta reserva? Esta ação não pode ser desfeita.")) {
+            if (!confirm("Tem certeza que deseja cancelar esta reserva?")) {
                 return;
             }
 
             try {
-                // Busca a reserva que coincide com o e-mail e a data
+                // Busca a reserva com os 3 filtros para máxima segurança
                 const querySnapshot = await db.collection("reservations")
                     .where("email", "==", email)
+                    .where("cro", "==", cro)
                     .where("date", "==", date)
                     .get();
 
                 if (querySnapshot.empty) {
-                    alert("Nenhuma reserva encontrada com esses dados.");
+                    alert("Nenhuma reserva encontrada. Verifique se o E-mail, CRO e Data estão corretos.");
                     return;
                 }
 
-                // Deleta os documentos encontrados
+                // Executa a exclusão
                 const batch = db.batch();
                 querySnapshot.forEach((doc) => {
                     batch.delete(doc.ref);
@@ -526,14 +528,20 @@
                 await batch.commit();
 
                 alert("Reserva cancelada com sucesso!");
+                
+                // Limpa os campos e fecha o modal
+                document.getElementById('cancelEmail').value = '';
+                document.getElementById('cancelCRO').value = '';
+                document.getElementById('cancelDate').value = '';
                 document.getElementById('cancelModal').classList.add('hidden');
                 
-                // Atualiza o calendário e a lista de ocupados
+                // Atualiza o calendário na tela imediatamente
                 fetchOccupiedSlots(); 
                 
             } catch (error) {
-                console.error("Erro ao cancelar:", error);
-                alert("Ocorreu um erro ao tentar cancelar. Verifique sua conexão.");
+                console.error("Erro detalhado:", error);
+                // Se o erro for de índice, o console vai mostrar um link para você clicar e ativar o índice no Firebase
+                alert("Erro ao cancelar: " + error.message);
             }
         }
 
@@ -983,6 +991,7 @@ Sistema Galeria Coworking`
         
         <div class="space-y-4">
             <input type="email" id="cancelEmail" placeholder="E-mail da reserva" class="w-full p-3 border rounded-lg focus:ring-accent focus:border-accent">
+            <input type="text" id="cancelCRO" placeholder="Seu CRO" class="w-full p-3 border rounded-lg">
             <input type="date" id="cancelDate" class="w-full p-3 border rounded-lg focus:ring-accent focus:border-accent">
         </div>
 
