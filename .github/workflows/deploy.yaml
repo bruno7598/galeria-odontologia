@@ -3,17 +3,20 @@ name: Deploy Seguro Galeria
 on:
   push:
     branches:
-      - main  # Se sua branch for master, mude para master aqui
+      - main  # Verifique se o nome da sua branch é main ou master
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Isso dá permissão extra para o deploy
     steps:
       - name: Checkout código
         uses: actions/checkout@v3
 
       - name: Injetar chaves de segurança
         run: |
+          # Use o nome EXATO do seu arquivo (se for index.html, mude aqui)
           sed -i "s|___FIREBASE_API_KEY___|${{ secrets.FIREBASE_API_KEY }}|g" index.html
           sed -i "s|___FIREBASE_AUTH_DOMAIN___|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g" index.html
           sed -i "s|___FIREBASE_PROJECT_ID___|${{ secrets.FIREBASE_PROJECT_ID }}|g" index.html
