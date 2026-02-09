@@ -492,6 +492,51 @@
         }
 
 
+        async function processCancellation() {
+            const email = document.getElementById('cancelEmail').value;
+            const date = document.getElementById('cancelDate').value;
+
+            if (!email || !date) {
+                alert("Por favor, preencha o e-mail e a data da reserva.");
+                return;
+            }
+
+            if (!confirm("Tem certeza que deseja cancelar esta reserva? Esta ação não pode ser desfeita.")) {
+                return;
+            }
+
+            try {
+                // Busca a reserva que coincide com o e-mail e a data
+                const querySnapshot = await db.collection("reservations")
+                    .where("email", "==", email)
+                    .where("date", "==", date)
+                    .get();
+
+                if (querySnapshot.empty) {
+                    alert("Nenhuma reserva encontrada com esses dados.");
+                    return;
+                }
+
+                // Deleta os documentos encontrados
+                const batch = db.batch();
+                querySnapshot.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+
+                await batch.commit();
+
+                alert("Reserva cancelada com sucesso!");
+                document.getElementById('cancelModal').classList.add('hidden');
+                
+                // Atualiza o calendário e a lista de ocupados
+                fetchOccupiedSlots(); 
+                
+            } catch (error) {
+                console.error("Erro ao cancelar:", error);
+                alert("Ocorreu um erro ao tentar cancelar. Verifique sua conexão.");
+            }
+        }
+
         function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
             const equipmentList = equipment.length > 0 ? 
                 `Equipamentos/Materiais Adicionais:\n${equipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
@@ -668,7 +713,7 @@ Sistema Galeria Coworking`
                 Deseja cancelar uma reserva existente?
             </button>
         </div>
-        
+
     </section>
 
     <section id="about" class="py-16 bg-secondary"> 
