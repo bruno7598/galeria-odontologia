@@ -404,14 +404,24 @@
          * 6. FUNÇÃO confirmPayment() PARA SALVAR NO FIRESTORE
          */
         function confirmPayment() {
-            closePixModal();
-            
+            // 1. Verificar obrigatoriedade do comprovante
+            const fileInput = document.getElementById('pixFile');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                alert("Por favor, anexe o comprovante do PIX para finalizar sua reserva.");
+                return; // Interrompe a função aqui mesmo
+            }
+
+            // Se o arquivo existe, prosseguimos com a lógica
             const timeSlot = document.getElementById('timeSlot').value;
             const clientName = document.getElementById('clientName').value;
             const clientEmail = document.getElementById('email').value;
             const clientCRO = document.getElementById('cro').value;
             const clientPhone = document.getElementById('phone').value;
-            const selectedTimeText = document.getElementById('timeSlot').selectedOptions[0].text;
+            
+            // Captura o texto do horário selecionado com segurança
+            const timeSlotSelect = document.getElementById('timeSlot');
+            const selectedTimeText = timeSlotSelect.options[timeSlotSelect.selectedIndex].text;
+            
             const totalAmountText = document.getElementById('totalPrice').textContent;
             const totalAmount = parseFloat(totalAmountText.replace('R$', '').replace(',', '.').trim());
 
@@ -429,15 +439,16 @@
                     'kitClareamentoConsultorio': 'Kit clareamento consultório',
                     'kitClareamentoCaseiro': 'Kit clareamento caseiro'
                 };
-                selectedEquipment.push(equipmentNames[checkbox.value]);
+                if (equipmentNames[checkbox.value]) {
+                    selectedEquipment.push(equipmentNames[checkbox.value]);
+                }
             });
             
             let clientDescription = '';
             if (selectedPlan === 'hora') {
                 clientDescription = `${clientName} - ${selectedTimeText} (Hora)`;
             } else if (selectedPlan === 'turno') {
-                // Isso ajuda o sistema a ler "Manhã" ou "Tarde" depois
-                clientDescription = `${clientName} - Turno ${selectedTimeText.includes('08:00') ? 'Manhã' : 'Tarde'}`;
+                clientDescription = `${clientName} - Turno ${timeSlot.includes('08:00') ? 'Manhã' : 'Tarde'}`;
             } else if (selectedPlan === 'dia') {
                 clientDescription = `${clientName} - Dia Completo`;
             }
@@ -453,26 +464,30 @@
                 plan: selectedPlan,
                 totalAmount: totalAmount,
                 equipment: selectedEquipment,
-                paymentStatus: 'Confirmado PIX', 
+                paymentStatus: 'Aguardando Verificação (PIX Anexado)', 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // SALVA NO FIRESTORE
+            // 2. Fechar o modal do PIX apenas após a validação do arquivo
+            closePixModal();
+
+            // 3. SALVA NO FIRESTORE
             db.collection("reservations").add(reservationData)
                 .then((docRef) => {
                     console.log("Reserva salva com ID:", docRef.id);
                     
+                    // Envio de e-mails
                     sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
                     sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
                     
+                    // Mostrar modal de sucesso
                     document.getElementById('confirmationEmail').textContent = clientEmail;
                     document.getElementById('successModal').classList.remove('hidden');
                     document.getElementById('successModal').classList.add('flex');
-                    
                 })
                 .catch((error) => {
                     console.error("Erro ao salvar reserva no Firestore:", error);
-                    alert("Erro ao finalizar reserva. Tente novamente ou entre em contato. Erro: " + error.message);
+                    alert("Erro ao finalizar reserva. Tente novamente. Erro: " + error.message);
                 });
         }
 
@@ -866,6 +881,16 @@ Sistema Galeria Coworking`
                 <p class="text-xs text-textdark mb-2">Chave PIX:</p>
                 <p id="pixKey" class="font-mono text-sm break-all text-textdark">galeria.coworking@exemplo.com</p>
                 <button onclick="copyPixKey()" class="mt-2 text-accent text-sm hover:underline">Copiar chave</button>
+            </div>
+
+            <div class="bg-gray-50 p-3 text-xs break-all mb-4 border border-dashed border-accent rounded text-center">
+                000.000.000-00 (Exemplo de Chave)
+            </div>
+
+            <div class="mb-4 text-left">
+                <label class="block text-xs font-bold text-gray-700 mb-1">Anexar Comprovante (Obrigatório):</label>
+                <input type="file" id="pixFile" accept="image/*,application/pdf" 
+                    class="w-full text-xs p-2 border rounded bg-white file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-white hover:file:bg-[#7e5748]">
             </div>
             
             <div class="text-center mb-6">
