@@ -213,13 +213,19 @@
             if (isPast) {
                     dayClass += ' text-gray-400 cursor-not-allowed';
                 } else if (hasOccupied) {
-                    // Se o dia tiver "Dia Completo", fica vermelho, senão fica laranja (atenção)
-                    const isFullDay = dayOccupied.some(slot => slot.client.includes('Dia Completo'));
-                    dayClass += isFullDay ? ' bg-red-200 text-red-800' : ' bg-orange-100 text-orange-800';
-                    dayClass += ' tooltip';
+                    dayClass += ' bg-yellow-100 text-yellow-800 tooltip';
+                    const occupiedInfo = dayOccupied.map(slot => {
+                        const client = slot.client;
+                        if (client.includes('Manhã')) return 'Manhã (08h-12h)';
+                        if (client.includes('Tarde')) return 'Tarde (13h-17h)';
+                        if (client.includes('Dia Completo')) return 'Dia Completo';
+                        return `${slot.time}`; // Para reservas por hora
+                    });
                     
-                    const uniqueInfo = [...new Set(dayOccupied.map(slot => slot.client.split(' - ')[1]))];
+                    const uniqueInfo = [...new Set(occupiedInfo)];
                     tooltipContent = `<span class="tooltiptext">Ocupado: ${uniqueInfo.join(', ')}</span>`;
+                } else {
+                    dayClass += ' hover:bg-primary hover:bg-opacity-50'; 
                 }
             
             let calendarHTML = `
