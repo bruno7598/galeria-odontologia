@@ -499,44 +499,48 @@
             const date = document.getElementById('cancelDate').value;
 
             if (!email || !cro || !date) {
-                alert("Por favor, preencha todos os campos.");
+                alert("Por favor, preencha todos os campos para cancelar.");
                 return;
             }
 
-            try {
-                // Busca os dados da reserva antes de apagar para ter o valor do estorno
-                const querySnapshot = await db.collection("reservations")
-                    .where("email", "==", email)
-                    .where("cro", "==", cro)
-                    .where("date", "==", date)
-                    .get();
+            // A partir daqui o código corre "aberto". Se houver erro, o F12 mostrará a linha exata.
+            console.log("Iniciando busca de reserva para:", email, date);
 
-                if (querySnapshot.empty) {
-                    alert("Reserva não encontrada. Verifique se o E-mail e o CRO estão corretos.");
-                    return;
-                }
+            const querySnapshot = await db.collection("reservations")
+                .where("email", "==", email)
+                .where("cro", "==", cro)
+                .where("date", "==", date)
+                .get();
 
-                const reservationData = querySnapshot.docs[0].data();
-                const valorEstorno = reservationData.totalAmount || "Não informado";
-                const nomeCliente = reservationData.name || "Não informado";
-
-                const batch = db.batch();
-                querySnapshot.forEach((doc) => {
-                    batch.delete(doc.ref);
-                });
-
-                await batch.commit();
-
-                // DISPARA O ALERTA PARA SEU NOVO E-MAIL
-                sendRefundNotification(email, cro, date, valorEstorno, nomeCliente);
-
-                alert("Cancelamento realizado! O pedido de estorno foi enviado para mariodontologia1@gmail.com");
-                location.reload();
-
-            } catch (error) {
-                console.error("Erro no cancelamento:", error);
-                alert("Erro ao processar. Tente novamente.");
+            if (querySnapshot.empty) {
+                alert("Nenhuma reserva encontrada. Verifique se o E-mail, CRO e Data estão corretos.");
+                return;
             }
+
+            // Pega os dados do primeiro documento encontrado antes de deletar
+            const docData = querySnapshot.docs[0].data();
+            
+            // IMPORTANTE: No seu banco os dados são salvos como 'clientName' e 'totalAmount'
+            const valorEstorno = docData.totalAmount || "0,00";
+            const nomeCliente = docData.clientName || "Doutor(a)"; 
+
+            const batch = db.batch();
+            querySnapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+
+            // Se o Firebase falhar aqui, o erro aparecerá em vermelho no Console
+            await batch.commit();
+            console.log("✅ Reserva excluída com sucesso do Firebase.");
+
+            // Chama a função de e-mail passando os dados coletados
+            sendRefundNotification(email, cro, date, valorEstorno, nomeCliente);
+
+            alert("Reserva cancelada com sucesso! O pedido de estorno foi enviado para mariodontologia1@gmail.com");
+            
+            // Fecha o modal e recarrega a página
+            document.getElementById('cancelModal').classList.add('hidden');
+            location.reload();
         }
 
         function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
