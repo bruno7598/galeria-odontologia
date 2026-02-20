@@ -493,22 +493,17 @@
         }
 
 
-        async function processCancellation() {
-            const email = document.getElementById('cancelEmail').value.trim();
-            const cro = document.getElementById('cancelCRO').value.trim();
+        async function processCancel() {
+            const email = document.getElementById('cancelEmail').value;
+            const cro = document.getElementById('cancelCRO').value;
             const date = document.getElementById('cancelDate').value;
 
             if (!email || !cro || !date) {
-                alert("Por favor, preencha E-mail, CRO e a Data da reserva para cancelar.");
-                return;
-            }
-
-            if (!confirm("Tem certeza que deseja cancelar esta reserva? Esta ação é permanente.")) {
+                alert("Por favor, preencha todos os campos para cancelar.");
                 return;
             }
 
             try {
-                // Busca a reserva que bate com os 3 critérios: e-mail, cro e data
                 const querySnapshot = await db.collection("reservations")
                     .where("email", "==", email)
                     .where("cro", "==", cro)
@@ -527,32 +522,22 @@
 
                 await batch.commit();
 
-                // --- NOVO: DISPARO DE E-MAILS DE CANCELAMENTO/ESTORNO ---
-                // 1. Notifica você (proprietária) para fazer o estorno
+                // DISPARA O E-MAIL DE CANCELAMENTO/ESTORNO
                 sendRefundNotification(email, cro, date);
 
-                alert("Reserva cancelada com sucesso! Uma solicitação de estorno foi enviada para a administração.");
+                alert("Reserva cancelada com sucesso! A solicitação de estorno foi enviada à administração.");
                 
-                // Limpa os campos e fecha o modal
-                document.getElementById('cancelEmail').value = '';
-                document.getElementById('cancelCRO').value = '';
-                document.getElementById('cancelDate').value = '';
+                // Limpar e fechar
                 document.getElementById('cancelModal').classList.add('hidden');
-                
-                // Atualiza o calendário na tela para liberar a vaga
                 if (typeof fetchOccupiedSlots === "function") {
                     fetchOccupiedSlots();
                 } else {
-                    location.reload(); // Recarrega a página caso a função não seja encontrada
+                    location.reload();
                 }
-                
+
             } catch (error) {
                 console.error("Erro ao cancelar:", error);
-                if (error.message.includes("permissions")) {
-                    alert("Erro de Permissão: Você precisa liberar a exclusão (delete) nas Regras do Firebase Console.");
-                } else {
-                    alert("Erro ao cancelar: " + error.message);
-                }
+                alert("Erro ao processar o cancelamento no banco de dados.");
             }
         }
 
@@ -664,29 +649,36 @@
         }
 
         function sendRefundNotification(clientEmail, clientCRO, cancelDate) {
-            const SERVICE_ID = 'service_g1yi8ap'; // Seu ID de serviço (proprietária)
-            const TEMPLATE_ID = 'template_xiqxxfh'; // Seu ID de template
+            const SERVICE_ID = 'service_g1yi8ap'; // Seu serviço de proprietária
+            const TEMPLATE_ID = 'template_xiqxxfh';
             const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
 
             const templateParams = {
-                email: 'mariodontologia1@gmail.com', // Destinatário: Você
-                from_name: 'Sistema Galeria - ALERTA DE ESTORNO',
-                subject: '⚠️ SOLICITAÇÃO DE ESTORNO - Cancelamento efetuado',
+                email: 'marianadelgadodentista@gmail.com', // Onde você vai receber o aviso
+                client_email: clientEmail, // E-mail do dentista que cancelou
+                client_cro: clientCRO,
+                cancel_date: new Date(cancelDate).toLocaleDateString('pt-BR'),
+                from_name: 'Sistema Galeria Coworking',
+                subject: '⚠️ CANCELAMENTO E PEDIDO DE ESTORNO',
                 message: `Olá Mariana,
                 
-        Uma reserva foi CANCELADA no sistema e requer atenção para estorno.
+        Houve um cancelamento de reserva. 
 
-        DADOS PARA O PIX DE DEVOLUÇÃO:
-        • E-mail do Profissional: ${clientEmail}
-        • CRO: ${clientCRO}
-        • Data da Reserva que foi Cancelada: ${new Date(cancelDate).toLocaleDateString('pt-BR')}
+        DADOS DO CLIENTE:
+        Email: ${clientEmail}
+        CRO: ${clientCRO}
+        Data Cancelada: ${cancelDate}
 
-        Verifique no painel do banco/Firebase o valor pago para proceder com o estorno conforme sua política.`
+        Favor realizar o estorno do PIX para o e-mail acima.`
             };
 
+            console.log('📧 Enviando alerta de estorno...');
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
-                .then(() => console.log("✅ Notificação de estorno enviada para Mariana."))
-                .catch((err) => console.error("❌ Erro ao enviar alerta de estorno:", err));
+                .then(function(response) {
+                    console.log('✅ Alerta de estorno enviado!', response);
+                }, function(error) {
+                    console.log('❌ Erro no EmailJS de cancelamento:', error);
+                });
         }
 
         // Event listeners
