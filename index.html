@@ -535,6 +535,7 @@
             try {
                 await sendRefundNotification(email, cro, date, valorEstorno, nomeCliente);
                 alert("Cancelamento realizado com sucesso! O e-mail de estorno foi enviado para Mariana.");
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 location.reload();
             } catch (e) {
                 console.error("❌ Erro fatal no envio do e-mail:", e);
