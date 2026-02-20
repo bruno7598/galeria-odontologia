@@ -527,7 +527,11 @@
 
                 await batch.commit();
 
-                alert("Reserva cancelada com sucesso!");
+                // --- NOVO: DISPARO DE E-MAILS DE CANCELAMENTO/ESTORNO ---
+                // 1. Notifica você (proprietária) para fazer o estorno
+                sendRefundNotification(email, cro, date);
+
+                alert("Reserva cancelada com sucesso! Uma solicitação de estorno foi enviada para a administração.");
                 
                 // Limpa os campos e fecha o modal
                 document.getElementById('cancelEmail').value = '';
@@ -657,6 +661,32 @@
                 }, function(error) {
                     console.log('❌ Erro ao enviar notificação para proprietário:', error);
                 });
+        }
+
+        function sendRefundNotification(clientEmail, clientCRO, cancelDate) {
+            const SERVICE_ID = 'service_g1yi8ap'; // Seu ID de serviço (proprietária)
+            const TEMPLATE_ID = 'template_xiqxxfh'; // Seu ID de template
+            const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
+
+            const templateParams = {
+                email: 'marianadelgadodentista@gmail.com', // Destinatário: Você
+                from_name: 'Sistema Galeria - ALERTA DE ESTORNO',
+                subject: '⚠️ SOLICITAÇÃO DE ESTORNO - Cancelamento efetuado',
+                message: `Olá Mariana,
+                
+        Uma reserva foi CANCELADA no sistema e requer atenção para estorno.
+
+        DADOS PARA O PIX DE DEVOLUÇÃO:
+        • E-mail do Profissional: ${clientEmail}
+        • CRO: ${clientCRO}
+        • Data da Reserva que foi Cancelada: ${new Date(cancelDate).toLocaleDateString('pt-BR')}
+
+        Verifique no painel do banco/Firebase o valor pago para proceder com o estorno conforme sua política.`
+            };
+
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+                .then(() => console.log("✅ Notificação de estorno enviada para Mariana."))
+                .catch((err) => console.error("❌ Erro ao enviar alerta de estorno:", err));
         }
 
         // Event listeners
