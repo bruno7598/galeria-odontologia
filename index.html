@@ -556,48 +556,47 @@
             const equipmentList = equipment.length > 0 ? 
                 `Equipamentos/Materiais Adicionais:\n${equipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
             
-            // CONFIGURAÇÕES DO EMAILJS (Usadas no arquivo anterior)
             const SERVICE_ID = 'service_s2cozam';
             const TEMPLATE_ID = 'template_8u47tu5';
             const PUBLIC_KEY = '7CIpJQwSMHZZWH_Ng';
             
             const templateParams = {
-                user_email: email,
+                email: email, // Alterado de user_email para email para bater com {{email}} do painel
                 user_name: name,
-                reply_to: email,
+                reply_to: 'marianadelgadodentista@gmail.com', // Respostas do cliente vão para você
                 to_name: name,
                 from_name: 'Galeria Coworking Odontológico',
                 subject: '✅ Reserva Confirmada - Galeria Coworking',
                 message: `🦷 GALERIA COWORKING ODONTOLÓGICO
 
-✅ RESERVA CONFIRMADA!
+        ✅ RESERVA CONFIRMADA!
 
-📋 DADOS DO PROFISSIONAL:
-• Nome: ${name}
-• CRO: ${cro}
-• Telefone: ${phone}
-• Email: ${email}
+        📋 DADOS DO PROFISSIONAL:
+        • Nome: ${name}
+        • CRO: ${cro}
+        • Telefone: ${phone}
+        • Email: ${email}
 
-📅 DETALHES DA RESERVA:
-• Data: ${new Date(date).toLocaleDateString('pt-BR')}
-• Horário: ${time}
-• Plano: ${plan}
-• Valor Total: ${total}
+        📅 DETALHES DA RESERVA:
+        • Data: ${new Date(date).toLocaleDateString('pt-BR')}
+        • Horário: ${time}
+        • Plano: ${plan}
+        • Valor Total: ${total}
 
-${equipmentList}📍 ENDEREÇO:
-Galeria Coworking Odontológico
-[Seu endereço completo aqui]
+        ${equipmentList}📍 ENDEREÇO:
+        Galeria Coworking Odontológico
+        [Seu endereço completo aqui]
 
-📞 CONTATO:
-WhatsApp: (32) 99909-4126
-Email: marianadelgadodentista@gmail.com
+        📞 CONTATO:
+        WhatsApp: (32) 99909-4126
+        Email: marianadelgadodentista@gmail.com
 
-⚠️ IMPORTANTE:
-• Chegue 15 minutos antes do horário
-• Traga seus materiais básicos
-• Cancelamentos até 24h antes
+        ⚠️ IMPORTANTE:
+        • Chegue 15 minutos antes do horário
+        • Traga seus materiais básicos
+        • Cancelamentos até 24h antes
 
-Obrigado por escolher a Galeria Coworking!`
+        Obrigado por escolher a Galeria Coworking!`
             };
             
             console.log('📧 Enviando email de confirmação...');
@@ -606,7 +605,6 @@ Obrigado por escolher a Galeria Coworking!`
                     console.log('✅ EMAIL ENVIADO COM SUCESSO!', response);
                 }, function(error) {
                     console.log('❌ ERRO AO ENVIAR EMAIL:', error);
-                    alert('Erro ao enviar email de confirmação. A reserva foi salva, mas a confirmação pode ter falhado. Verifique o console.');
                 });
         }
 
@@ -618,38 +616,37 @@ Obrigado por escolher a Galeria Coworking!`
             const TEMPLATE_ID = 'template_xiqxxfh';
             const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
             
-            // 🔧 SUBSTITUA PELO SEU EMAIL DE PROPRIETÁRIO:
-            const OWNER_EMAIL = 'marianadelgadodentista@gmail.com'; // ⚠️ EMAIL DO PROPRIETÁRIO DEVE SER SUBSTITUÍDO
+            const OWNER_EMAIL = 'marianadelgadodentista@gmail.com'; 
             
             const ownerTemplateParams = {
-                user_email: OWNER_EMAIL,
+                email: OWNER_EMAIL, // Alterado para email para evitar o erro 422 no seu e-mail também
                 user_name: 'Proprietário Galeria Coworking',
                 reply_to: clientEmail,
-                to_name: 'Proprietário',
+                to_name: 'Mariana',
                 from_name: 'Sistema Galeria Coworking',
                 subject: '🔔 NOVA RESERVA CONFIRMADA - Galeria Coworking',
                 message: `🦷 NOVA RESERVA NO COWORKING!
 
-🔔 NOTIFICAÇÃO DE RESERVA CONFIRMADA
+        🔔 NOTIFICAÇÃO DE RESERVA CONFIRMADA
 
-👨‍⚕️ DADOS DO PROFISSIONAL:
-• Nome: ${clientName}
-• CRO: ${clientCRO}
-• Telefone: ${clientPhone}
-• Email: ${clientEmail}
+        👨‍⚕️ DADOS DO PROFISSIONAL:
+        • Nome: ${clientName}
+        • CRO: ${clientCRO}
+        • Telefone: ${clientPhone}
+        • Email: ${clientEmail}
 
-📅 DETALHES DA RESERVA:
-• Data: ${new Date(selectedDate).toLocaleDateString('pt-BR')}
-• Horário: ${selectedTimeText}
-• Plano: ${selectedPlan}
-• Valor Total: ${totalAmount}
+        📅 DETALHES DA RESERVA:
+        • Data: ${new Date(selectedDate).toLocaleDateString('pt-BR')}
+        • Horário: ${selectedTimeText}
+        • Plano: ${selectedPlan}
+        • Valor Total: ${totalAmount}
 
-${equipmentList}💰 STATUS DO PAGAMENTO:
-• Método: PIX
-• Status: Confirmado pelo cliente
-• Valor: ${totalAmount}
+        ${equipmentList}💰 STATUS DO PAGAMENTO:
+        • Método: PIX
+        • Status: Confirmado pelo cliente
+        • Valor: ${totalAmount}
 
-Sistema Galeria Coworking`
+        Sistema Galeria Coworking`
             };
             
             console.log('📧 Enviando notificação para o proprietário...');
