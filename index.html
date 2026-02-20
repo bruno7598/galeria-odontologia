@@ -504,11 +504,7 @@
             }
 
             try {
-                // Mostra um aviso de carregamento
-                const btn = event.target;
-                btn.innerText = "Processando...";
-                btn.disabled = true;
-
+                // Busca a reserva para pegar o valor e nome antes de deletar
                 const querySnapshot = await db.collection("reservations")
                     .where("email", "==", email)
                     .where("cro", "==", cro)
@@ -516,11 +512,15 @@
                     .get();
 
                 if (querySnapshot.empty) {
-                    alert("Nenhuma reserva encontrada. Verifique os dados.");
-                    btn.innerText = "Confirmar Cancelamento";
-                    btn.disabled = false;
+                    alert("Reserva não encontrada. Verifique os dados.");
                     return;
                 }
+
+                // Pega os dados do primeiro documento encontrado
+                const reservationData = querySnapshot.docs[0].data();
+                const valorEstorno = reservationData.totalAmount || "Valor não registrado";
+                const nomeCliente = reservationData.name || "Não informado";
+                const telefoneCliente = reservationData.phone || "Não informado";
 
                 const batch = db.batch();
                 querySnapshot.forEach((doc) => {
@@ -529,16 +529,16 @@
 
                 await batch.commit();
 
-                // Dispara o alerta de estorno para a Mariana
-                sendRefundNotification(email, cro, date);
+                // Envia o e-mail com TODAS as informações para o estorno
+                sendRefundNotification(email, cro, date, valorEstorno, nomeCliente, telefoneCliente);
 
-                alert("Reserva cancelada! O pedido de estorno foi enviado para marianadelgadodentista@gmail.com");
+                alert(`Sucesso! Reserva cancelada. O pedido de estorno de R$ ${valorEstorno} foi enviado para mariodontologia1@gmail.com`);
                 
-                location.reload(); // Recarrega para limpar o calendário
+                location.reload();
 
             } catch (error) {
-                console.error("Erro:", error);
-                alert("Erro ao cancelar. Tente novamente.");
+                console.error("Erro no cancelamento:", error);
+                alert("Erro ao processar. Tente novamente.");
             }
         }
 
@@ -649,37 +649,35 @@
                 });
         }
 
-        function sendRefundNotification(clientEmail, clientCRO, cancelDate) {
-            const SERVICE_ID = 'service_g1yi8ap'; // Seu serviço de proprietária
+        function sendRefundNotification(clientEmail, clientCRO, cancelDate, valor, nome, telefone) {
+            const SERVICE_ID = 'service_g1yi8ap'; 
             const TEMPLATE_ID = 'template_xiqxxfh';
             const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
 
             const templateParams = {
-                email: 'mariodontologia1@gmail.com', // Onde você vai receber o aviso
-                client_email: clientEmail, // E-mail do dentista que cancelou
-                client_cro: clientCRO,
-                cancel_date: new Date(cancelDate).toLocaleDateString('pt-BR'),
-                from_name: 'Sistema Galeria Coworking',
-                subject: '⚠️ CANCELAMENTO E PEDIDO DE ESTORNO',
+                email: 'mariodontologia1@gmail.com', // Destinatário
+                subject: '⚠️ NOVO PEDIDO DE ESTORNO - Galeria Coworking',
                 message: `Olá Mariana,
                 
-        Houve um cancelamento de reserva. 
+        Uma reserva acaba de ser CANCELADA. Aqui estão os dados para você realizar o estorno:
 
-        DADOS DO CLIENTE:
-        Email: ${clientEmail}
-        CRO: ${clientCRO}
-        Data Cancelada: ${cancelDate}
+        💰 VALOR A SER ESTORNADO: R$ ${valor}
 
-        Favor realizar o estorno do PIX para o e-mail acima.`
+        👤 DADOS DO CLIENTE:
+        • Nome: ${nome}
+        • E-mail (Chave PIX): ${clientEmail}
+        • CRO: ${clientCRO}
+        • Telefone: ${telefone}
+
+        📅 DADOS DA RESERVA:
+        • Data que estava agendada: ${new Date(cancelDate).toLocaleDateString('pt-BR')}
+
+        Por favor, realize o estorno via PIX utilizando o e-mail acima.`
             };
 
-            console.log('📧 Enviando alerta de estorno...');
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
-                .then(function(response) {
-                    console.log('✅ Alerta de estorno enviado!', response);
-                }, function(error) {
-                    console.log('❌ Erro no EmailJS de cancelamento:', error);
-                });
+                .then(() => console.log("✅ E-mail de estorno enviado com sucesso!"))
+                .catch(err => console.error("❌ Erro ao enviar e-mail:", err));
         }
 
         // Event listeners
