@@ -479,7 +479,7 @@
                     
                     // Envio de e-mails
                     sendEmailConfirmation(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
-                    sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
+                    // sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmountText, selectedEquipment);
                     
                     // Mostrar modal de sucesso
                     document.getElementById('confirmationEmail').textContent = clientEmail;
@@ -599,56 +599,56 @@
                 });
         }
 
-        function sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment) {
-            const equipmentList = selectedEquipment.length > 0 ? 
-                `Equipamentos/Materiais Solicitados:\n${selectedEquipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
+        // function sendOwnerNotification(clientEmail, clientName, clientCRO, clientPhone, selectedDate, selectedTimeText, selectedPlan, totalAmount, selectedEquipment) {
+        //     const equipmentList = selectedEquipment.length > 0 ? 
+        //         `Equipamentos/Materiais Solicitados:\n${selectedEquipment.map(item => `• ${item}`).join('\n')}\n\n` : '';
             
-            const SERVICE_ID = 'service_s2cozam';
-            const TEMPLATE_ID = 'template_8u47tu5';
-            const PUBLIC_KEY = '7CIpJQwSMHZZWH_Ng';
+        //     const SERVICE_ID = 'service_s2cozam';
+        //     const TEMPLATE_ID = 'template_8u47tu5';
+        //     const PUBLIC_KEY = '7CIpJQwSMHZZWH_Ng';
             
-            const OWNER_EMAIL = 'marianadelgadodentista@gmail.com'; 
+        //     const OWNER_EMAIL = 'marianadelgadodentista@gmail.com'; 
             
-            const ownerTemplateParams = {
-                email: OWNER_EMAIL, // Alterado para email para evitar o erro 422 no seu e-mail também
-                user_name: 'Proprietário Galeria Coworking',
-                reply_to: clientEmail,
-                to_name: 'Mariana',
-                from_name: 'Sistema Galeria Coworking',
-                subject: '🔔 NOVA RESERVA CONFIRMADA - Galeria Coworking',
-                message: `🦷 NOVA RESERVA NO COWORKING!
+        //     const ownerTemplateParams = {
+        //         email: OWNER_EMAIL, // Alterado para email para evitar o erro 422 no seu e-mail também
+        //         user_name: 'Proprietário Galeria Coworking',
+        //         reply_to: clientEmail,
+        //         to_name: 'Mariana',
+        //         from_name: 'Sistema Galeria Coworking',
+        //         subject: '🔔 NOVA RESERVA CONFIRMADA - Galeria Coworking',
+        //         message: `🦷 NOVA RESERVA NO COWORKING!
 
-        🔔 NOTIFICAÇÃO DE RESERVA CONFIRMADA
+        // 🔔 NOTIFICAÇÃO DE RESERVA CONFIRMADA
 
-        👨‍⚕️ DADOS DO PROFISSIONAL:
-        • Nome: ${clientName}
-        • CRO: ${clientCRO}
-        • Telefone: ${clientPhone}
-        • Email: ${clientEmail}
+        // 👨‍⚕️ DADOS DO PROFISSIONAL:
+        // • Nome: ${clientName}
+        // • CRO: ${clientCRO}
+        // • Telefone: ${clientPhone}
+        // • Email: ${clientEmail}
 
-        📅 DETALHES DA RESERVA:
-        • Data: ${new Date(selectedDate).toLocaleDateString('pt-BR')}
-        • Horário: ${selectedTimeText}
-        • Plano: ${selectedPlan}
-        • Valor Total: ${totalAmount}
+        // 📅 DETALHES DA RESERVA:
+        // • Data: ${new Date(selectedDate).toLocaleDateString('pt-BR')}
+        // • Horário: ${selectedTimeText}
+        // • Plano: ${selectedPlan}
+        // • Valor Total: ${totalAmount}
 
-        ${equipmentList}💰 STATUS DO PAGAMENTO:
-        • Método: PIX
-        • Status: Confirmado pelo cliente
-        • Valor: ${totalAmount}
+        // ${equipmentList}💰 STATUS DO PAGAMENTO:
+        // • Método: PIX
+        // • Status: Confirmado pelo cliente
+        // • Valor: ${totalAmount}
 
-        Sistema Galeria Coworking`
-            };
+        // Sistema Galeria Coworking`
+        //     };
             
-            console.log('📧 Enviando notificação para o proprietário...');
+        //     console.log('📧 Enviando notificação para o proprietário...');
             
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, ownerTemplateParams, PUBLIC_KEY)
-                .then(function(response) {
-                    console.log('✅ Notificação enviada para o proprietário!', response);
-                }, function(error) {
-                    console.log('❌ Erro ao enviar notificação para proprietário:', error);
-                });
-        }
+        //     emailjs.send(SERVICE_ID, TEMPLATE_ID, ownerTemplateParams, PUBLIC_KEY)
+        //         .then(function(response) {
+        //             console.log('✅ Notificação enviada para o proprietário!', response);
+        //         }, function(error) {
+        //             console.log('❌ Erro ao enviar notificação para proprietário:', error);
+        //         });
+        // }
 
         function sendRefundNotification(clientEmail, clientCRO, cancelDate, valor, nome) {
             const SERVICE_ID = 'service_s2cozam';
