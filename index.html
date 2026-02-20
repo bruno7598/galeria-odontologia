@@ -504,7 +504,7 @@
             }
 
             try {
-                // Busca a reserva para pegar o valor e nome antes de deletar
+                // Busca os dados da reserva antes de apagar para ter o valor do estorno
                 const querySnapshot = await db.collection("reservations")
                     .where("email", "==", email)
                     .where("cro", "==", cro)
@@ -512,15 +512,13 @@
                     .get();
 
                 if (querySnapshot.empty) {
-                    alert("Reserva não encontrada. Verifique os dados.");
+                    alert("Reserva não encontrada. Verifique se o E-mail e o CRO estão corretos.");
                     return;
                 }
 
-                // Pega os dados do primeiro documento encontrado
                 const reservationData = querySnapshot.docs[0].data();
-                const valorEstorno = reservationData.totalAmount || "Valor não registrado";
+                const valorEstorno = reservationData.totalAmount || "Não informado";
                 const nomeCliente = reservationData.name || "Não informado";
-                const telefoneCliente = reservationData.phone || "Não informado";
 
                 const batch = db.batch();
                 querySnapshot.forEach((doc) => {
@@ -529,11 +527,10 @@
 
                 await batch.commit();
 
-                // Envia o e-mail com TODAS as informações para o estorno
-                sendRefundNotification(email, cro, date, valorEstorno, nomeCliente, telefoneCliente);
+                // DISPARA O ALERTA PARA SEU NOVO E-MAIL
+                sendRefundNotification(email, cro, date, valorEstorno, nomeCliente);
 
-                alert(`Sucesso! Reserva cancelada. O pedido de estorno de R$ ${valorEstorno} foi enviado para mariodontologia1@gmail.com`);
-                
+                alert("Cancelamento realizado! O pedido de estorno foi enviado para mariodontologia1@gmail.com");
                 location.reload();
 
             } catch (error) {
@@ -649,35 +646,35 @@
                 });
         }
 
-        function sendRefundNotification(clientEmail, clientCRO, cancelDate, valor, nome, telefone) {
+        function sendRefundNotification(clientEmail, clientCRO, cancelDate, valor, nome) {
             const SERVICE_ID = 'service_g1yi8ap'; 
             const TEMPLATE_ID = 'template_xiqxxfh';
             const PUBLIC_KEY = 'ckNNBdvQMD-hnrc_T';
 
             const templateParams = {
-                email: 'mariodontologia1@gmail.com', // Destinatário
-                subject: '⚠️ NOVO PEDIDO DE ESTORNO - Galeria Coworking',
+                email: 'mariodontologia1@gmail.com', // DESTINATÁRIO FIXO
+                subject: '⚠️ PEDIDO DE ESTORNO - ' + nome,
                 message: `Olá Mariana,
                 
-        Uma reserva acaba de ser CANCELADA. Aqui estão os dados para você realizar o estorno:
+        Uma reserva foi CANCELADA. Dados para o estorno PIX:
 
-        💰 VALOR A SER ESTORNADO: R$ ${valor}
+        💰 VALOR: R$ ${valor}
+        👤 CLIENTE: ${nome}
+        📧 CHAVE PIX (E-mail): ${clientEmail}
+        🆔 CRO: ${clientCRO}
+        📅 DATA CANCELADA: ${new Date(cancelDate).toLocaleDateString('pt-BR')}
 
-        👤 DADOS DO CLIENTE:
-        • Nome: ${nome}
-        • E-mail (Chave PIX): ${clientEmail}
-        • CRO: ${clientCRO}
-        • Telefone: ${telefone}
-
-        📅 DADOS DA RESERVA:
-        • Data que estava agendada: ${new Date(cancelDate).toLocaleDateString('pt-BR')}
-
-        Por favor, realize o estorno via PIX utilizando o e-mail acima.`
+        Por favor, realize a devolução do valor via PIX.`
             };
 
+            console.log('📧 Tentando enviar e-mail de estorno...');
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
-                .then(() => console.log("✅ E-mail de estorno enviado com sucesso!"))
-                .catch(err => console.error("❌ Erro ao enviar e-mail:", err));
+                .then(function(response) {
+                    console.log('✅ E-mail de estorno ENVIADO!', response.status, response.text);
+                }, function(error) {
+                    console.log('❌ FALHA NO EMAILJS:', error);
+                    // Se der erro 422 aqui, o problema está no "To Email" do seu painel EmailJS
+                });
         }
 
         // Event listeners
