@@ -503,7 +503,7 @@
                 return;
             }
 
-            // 1. Busca a reserva
+            console.log("🔍 Buscando reserva no banco...");
             const querySnapshot = await db.collection("reservations")
                 .where("email", "==", email)
                 .where("cro", "==", cro)
@@ -511,43 +511,34 @@
                 .get();
 
             if (querySnapshot.empty) {
-                alert("Nenhuma reserva encontrada com esses dados.");
+                alert("Nenhuma reserva encontrada. Verifique se os dados estão corretos.");
                 return;
             }
 
             const docData = querySnapshot.docs[0].data();
             const valorEstorno = docData.totalAmount || "0,00";
-            const nomeCliente = docData.clientName || "Doutor(a)";
+            const nomeCliente = docData.clientName || "Profissional";
 
-            // 2. Apaga do Banco de Dados
+            console.log("✅ Reserva encontrada. Valor:", valorEstorno);
+
+            // Deleta do Firebase
             const batch = db.batch();
             querySnapshot.forEach((doc) => {
                 batch.delete(doc.ref);
             });
             await batch.commit();
+            console.log("🗑️ Reserva excluída do banco.");
 
-            // 3. Envia o E-mail (Igual ao agendamento, mas com os dados de estorno)
-            const templateParams = {
-                email: 'mariodontologia1@gmail.com', // Mariana recebe aqui
-                to_name: 'Mariana',
-                from_name: 'Sistema Galeria Coworking',
-                subject: '⚠️ CANCELAMENTO - Solicitação de Estorno',
-                message: `Olá Mariana, uma reserva foi cancelada.\n\n` +
-                        `Cliente: ${nomeCliente}\n` +
-                        `E-mail/PIX: ${email}\n` +
-                        `Valor a devolver: R$ ${valorEstorno}\n` +
-                        `Data da reserva: ${date}\n\n` +
-                        `O horário já foi liberado no calendário.`
-            };
-
-            // Usamos o 'await' para garantir que ele envie antes de recarregar a página
+            // ENVIA O EMAIL E ESPERA A RESPOSTA ANTES DE DAR SUCESSO
+            console.log("📧 Tentando enviar e-mail para Mariana...");
+            
             try {
-                await emailjs.send('service_s2cozam', 'template_8u47tu5', templateParams);
-                alert("Cancelamento concluído! O e-mail de estorno foi enviado para Mariana.");
+                await sendRefundNotification(email, cro, date, valorEstorno, nomeCliente);
+                alert("Cancelamento realizado com sucesso! O e-mail de estorno foi enviado para Mariana.");
                 location.reload();
-            } catch (error) {
-                console.error("Erro no EmailJS:", error);
-                alert("Reserva cancelada, mas o e-mail falhou. Por favor, avise a Mariana.");
+            } catch (e) {
+                console.error("❌ Erro fatal no envio do e-mail:", e);
+                alert("A reserva foi excluída, mas o e-mail não foi enviado. Verifique o console (F12).");
             }
         }
 
@@ -659,7 +650,7 @@
         }
 
         function sendRefundNotification(clientEmail, clientCRO, cancelDate, valor, nome) {
-            const SERVICE_ID = 'service_s2cozam'; 
+            const SERVICE_ID = 'service_s2cozam';
             const TEMPLATE_ID = 'template_8u47tu5';
             const PUBLIC_KEY = '7CIpJQwSMHZZWH_Ng';
 
