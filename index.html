@@ -499,13 +499,11 @@
             const date = document.getElementById('cancelDate').value;
 
             if (!email || !cro || !date) {
-                alert("Por favor, preencha todos os campos para cancelar.");
+                alert("Por favor, preencha todos os campos.");
                 return;
             }
 
-            // A partir daqui o código corre "aberto". Se houver erro, o F12 mostrará a linha exata.
-            console.log("Iniciando busca de reserva para:", email, date);
-
+            console.log("🔍 Buscando reserva no banco...");
             const querySnapshot = await db.collection("reservations")
                 .where("email", "==", email)
                 .where("cro", "==", cro)
@@ -513,34 +511,35 @@
                 .get();
 
             if (querySnapshot.empty) {
-                alert("Nenhuma reserva encontrada. Verifique se o E-mail, CRO e Data estão corretos.");
+                alert("Nenhuma reserva encontrada. Verifique se os dados estão corretos.");
                 return;
             }
 
-            // Pega os dados do primeiro documento encontrado antes de deletar
             const docData = querySnapshot.docs[0].data();
-            
-            // IMPORTANTE: No seu banco os dados são salvos como 'clientName' e 'totalAmount'
             const valorEstorno = docData.totalAmount || "0,00";
-            const nomeCliente = docData.clientName || "Doutor(a)"; 
+            const nomeCliente = docData.clientName || "Profissional";
 
+            console.log("✅ Reserva encontrada. Valor:", valorEstorno);
+
+            // Deleta do Firebase
             const batch = db.batch();
             querySnapshot.forEach((doc) => {
                 batch.delete(doc.ref);
             });
-
-            // Se o Firebase falhar aqui, o erro aparecerá em vermelho no Console
             await batch.commit();
-            console.log("✅ Reserva excluída com sucesso do Firebase.");
+            console.log("🗑️ Reserva excluída do banco.");
 
-            // Chama a função de e-mail passando os dados coletados
-            sendRefundNotification(email, cro, date, valorEstorno, nomeCliente);
-
-            alert("Reserva cancelada com sucesso! O pedido de estorno foi enviado para mariodontologia1@gmail.com");
+            // ENVIA O EMAIL E ESPERA A RESPOSTA ANTES DE DAR SUCESSO
+            console.log("📧 Tentando enviar e-mail para Mariana...");
             
-            // Fecha o modal e recarrega a página
-            document.getElementById('cancelModal').classList.add('hidden');
-            location.reload();
+            try {
+                await sendRefundNotification(email, cro, date, valorEstorno, nomeCliente);
+                alert("Cancelamento realizado com sucesso! O e-mail de estorno foi enviado para Mariana.");
+                location.reload();
+            } catch (e) {
+                console.error("❌ Erro fatal no envio do e-mail:", e);
+                alert("A reserva foi excluída, mas o e-mail não foi enviado. Verifique o console (F12).");
+            }
         }
 
         function sendEmailConfirmation(email, name, cro, phone, date, time, plan, total, equipment) {
