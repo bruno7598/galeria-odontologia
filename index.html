@@ -499,11 +499,16 @@
             const date = document.getElementById('cancelDate').value;
 
             if (!email || !cro || !date) {
-                alert("Por favor, preencha todos os campos para cancelar.");
+                alert("Por favor, preencha todos os campos.");
                 return;
             }
 
             try {
+                // Mostra um aviso de carregamento
+                const btn = event.target;
+                btn.innerText = "Processando...";
+                btn.disabled = true;
+
                 const querySnapshot = await db.collection("reservations")
                     .where("email", "==", email)
                     .where("cro", "==", cro)
@@ -511,7 +516,9 @@
                     .get();
 
                 if (querySnapshot.empty) {
-                    alert("Nenhuma reserva encontrada com esses dados. Verifique se o E-mail e o CRO estão corretos.");
+                    alert("Nenhuma reserva encontrada. Verifique os dados.");
+                    btn.innerText = "Confirmar Cancelamento";
+                    btn.disabled = false;
                     return;
                 }
 
@@ -522,22 +529,16 @@
 
                 await batch.commit();
 
-                // DISPARA O E-MAIL DE CANCELAMENTO/ESTORNO
+                // Dispara o alerta de estorno para a Mariana
                 sendRefundNotification(email, cro, date);
 
-                alert("Reserva cancelada com sucesso! A solicitação de estorno foi enviada à administração.");
+                alert("Reserva cancelada! O pedido de estorno foi enviado para marianadelgadodentista@gmail.com");
                 
-                // Limpar e fechar
-                document.getElementById('cancelModal').classList.add('hidden');
-                if (typeof fetchOccupiedSlots === "function") {
-                    fetchOccupiedSlots();
-                } else {
-                    location.reload();
-                }
+                location.reload(); // Recarrega para limpar o calendário
 
             } catch (error) {
-                console.error("Erro ao cancelar:", error);
-                alert("Erro ao processar o cancelamento no banco de dados.");
+                console.error("Erro:", error);
+                alert("Erro ao cancelar. Tente novamente.");
             }
         }
 
@@ -1036,7 +1037,7 @@
             <button onclick="document.getElementById('cancelModal').classList.add('hidden')" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition-colors">
                 Voltar
             </button>
-            <button onclick="processCancellation()" class="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors">
+            <button onclick="processCancel()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-opacity-90 transition-colors font-bold">
                 Confirmar Cancelamento
             </button>
         </div>
